@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://dbeesnoo1sq3n"]
+
+[node name="S_block" type="Node2D"]
+position = Vector2(-15, 15)
+
+[node name="ColorRect3" type="ColorRect" parent="."]
+offset_left = -15.0
+offset_top = -15.0
+offset_right = 14.5
+offset_bottom = 14.5
+color = Color(0, 1, 0, 1)

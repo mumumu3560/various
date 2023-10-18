@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvrayu5m7y7dk"]
+
+[ext_resource type="Script" path="res://mino.gd" id="1_f2rgw"]
+
+[node name="S_mino" type="Node2D"]
+position = Vector2(-15, 15)
+script = ExtResource("1_f2rgw")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = 15.0
+offset_top = -45.0
+offset_right = 44.5
+offset_bottom = -15.5
+color = Color(0, 1, 0, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+offset_left = -15.0
+offset_top = -45.0
+offset_right = 14.5
+offset_bottom = -15.5
+color = Color(0, 1, 0, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="."]
+offset_left = -15.0
+offset_top = -15.0
+offset_right = 14.5
+offset_bottom = 14.5
+color = Color(0, 1, 0, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="."]
+offset_left = -45.0
+offset_top = -15.0
+offset_right = -15.5
+offset_bottom = 14.5
+color = Color(0, 1, 0, 1)
+
+[node name="mino_ghost" type="Node2D" parent="."]

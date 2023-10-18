@@ -1,0 +1,220 @@
+[gd_scene load_steps=3 format=3 uid="uid://li86ixp8nbnh"]
+
+[ext_resource type="Script" path="res://mino.gd" id="1_66x1r"]
+[ext_resource type="PackedScene" uid="uid://clmq28y2gce64" path="res://field.tscn" id="1_xunga"]
+
+[node name="tetriminos" type="Node2D"]
+
+[node name="L_mino" type="Node2D" parent="."]
+position = Vector2(0, -1)
+script = ExtResource("1_66x1r")
+
+[node name="ColorRect" type="ColorRect" parent="L_mino"]
+offset_top = -30.0
+offset_right = 29.5
+offset_bottom = -0.5
+color = Color(1, 0.627451, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="L_mino"]
+offset_right = 29.5
+offset_bottom = 29.5
+color = Color(1, 0.647059, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect3" type="ColorRect" parent="L_mino"]
+offset_left = -30.0
+offset_right = -0.5
+offset_bottom = 29.5
+color = Color(1, 0.647059, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect4" type="ColorRect" parent="L_mino"]
+offset_left = -60.0
+offset_right = -30.5
+offset_bottom = 29.5
+color = Color(1, 0.647059, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="J_mino" type="Node2D" parent="."]
+position = Vector2(120, 0)
+
+[node name="ColorRect" type="ColorRect" parent="J_mino"]
+offset_left = -60.0
+offset_top = -30.0
+offset_right = -30.5
+offset_bottom = -0.5
+color = Color(0, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="J_mino"]
+offset_left = -60.0
+offset_right = -30.5
+offset_bottom = 29.5
+color = Color(0, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect3" type="ColorRect" parent="J_mino"]
+offset_left = -30.0
+offset_bottom = 30.0
+color = Color(0, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect4" type="ColorRect" parent="J_mino"]
+offset_right = 29.5
+offset_bottom = 29.5
+color = Color(0, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="S_mino" type="Node2D" parent="."]
+position = Vector2(240, 0)
+
+[node name="ColorRect" type="ColorRect" parent="S_mino"]
+offset_top = -30.0
+offset_right = 29.5
+offset_bottom = -0.5
+color = Color(0, 1, 0, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="S_mino"]
+offset_left = -30.0
+offset_top = -30.0
+offset_right = -0.5
+offset_bottom = -0.5
+color = Color(0, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect3" type="ColorRect" parent="S_mino"]
+offset_left = -30.0
+offset_right = -0.5
+offset_bottom = 29.5
+color = Color(0, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect4" type="ColorRect" parent="S_mino"]
+offset_left = -60.0
+offset_right = -30.5
+offset_bottom = 29.5
+color = Color(0, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Z_mino" type="Node2D" parent="."]
+position = Vector2(360, 0)
+
+[node name="ColorRect" type="ColorRect" parent="Z_mino"]
+offset_left = -60.0
+offset_top = -30.0
+offset_right = -30.5
+offset_bottom = -0.5
+color = Color(1, 0, 0, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="Z_mino"]
+offset_left = -30.0
+offset_top = -30.0
+offset_right = -0.5
+offset_bottom = -0.5
+color = Color(1, 0, 0, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="Z_mino"]
+offset_left = -30.0
+offset_right = -0.5
+offset_bottom = 29.5
+color = Color(1, 0, 0, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="Z_mino"]
+offset_right = 29.5
+offset_bottom = 29.5
+color = Color(1, 0, 0, 1)
+
+[node name="T_mino" type="Node2D" parent="."]
+position = Vector2(0, 120)
+
+[node name="ColorRect" type="ColorRect" parent="T_mino"]
+offset_left = -30.0
+offset_top = -30.0
+offset_right = -0.5
+offset_bottom = -0.5
+color = Color(0.705882, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="T_mino"]
+offset_left = -60.0
+offset_right = -30.5
+offset_bottom = 29.5
+color = Color(0.705882, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect3" type="ColorRect" parent="T_mino"]
+offset_left = -30.0
+offset_right = -0.5
+offset_bottom = 29.5
+color = Color(0.705882, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect4" type="ColorRect" parent="T_mino"]
+offset_right = 29.5
+offset_bottom = 29.5
+color = Color(0.705882, 0, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="O_mino" type="Node2D" parent="."]
+position = Vector2(120, 120)
+
+[node name="ColorRect" type="ColorRect" parent="O_mino"]
+offset_left = -30.0
+offset_top = -30.0
+offset_right = -0.5
+offset_bottom = -0.5
+color = Color(1, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="O_mino"]
+offset_top = -30.0
+offset_right = 29.5
+offset_bottom = -0.5
+color = Color(1, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect3" type="ColorRect" parent="O_mino"]
+offset_left = -30.0
+offset_right = -0.5
+offset_bottom = 29.5
+color = Color(1, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect4" type="ColorRect" parent="O_mino"]
+offset_right = 29.5
+offset_bottom = 29.5
+color = Color(1, 1, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="I_mino" type="Node2D" parent="."]
+position = Vector2(0, 240)
+
+[node name="ColorRect" type="ColorRect" parent="I_mino"]
+offset_left = -60.0
+offset_right = -30.5
+offset_bottom = 29.5
+color = Color(0, 1, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="I_mino"]
+offset_left = -30.0
+offset_right = -0.5
+offset_bottom = 29.5
+color = Color(0, 1, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect3" type="ColorRect" parent="I_mino"]
+offset_right = 29.5
+offset_bottom = 29.5
+color = Color(0, 1, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect4" type="ColorRect" parent="I_mino"]
+offset_left = 30.0
+offset_right = 59.5
+offset_bottom = 29.5
+color = Color(0, 1, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="Field" parent="." instance=ExtResource("1_xunga")]

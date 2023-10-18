@@ -1,0 +1,61 @@
+[gd_scene load_steps=5 format=3 uid="uid://chyaekhl8p55s"]
+
+[ext_resource type="PackedScene" uid="uid://clmq28y2gce64" path="res://field.tscn" id="1_880la"]
+[ext_resource type="Script" path="res://main.gd" id="1_s1j1x"]
+[ext_resource type="Script" path="res://Global.gd" id="3_8ijjp"]
+[ext_resource type="PackedScene" uid="uid://ciw71j4nhdnr1" path="res://mino_area.tscn" id="4_muexq"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_s1j1x")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(600, 330)
+
+[node name="Field" parent="." instance=ExtResource("1_880la")]
+
+[node name="Field_spawn" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_right = 600.0
+color = Color(1, 1, 1, 0)
+
+[node name="Field_keep" type="ColorRect" parent="."]
+offset_left = 600.0
+offset_right = 600.0
+color = Color(1, 1, 1, 0)
+
+[node name="tetriminos" type="Node2D" parent="."]
+
+[node name="Global" type="Node2D" parent="."]
+script = ExtResource("3_8ijjp")
+
+[node name="mino_area_hold" parent="." instance=ExtResource("4_muexq")]
+offset_left = 330.0
+offset_right = 405.0
+
+[node name="mino_area_1" parent="." instance=ExtResource("4_muexq")]
+offset_left = 780.0
+offset_top = 150.0
+offset_right = 855.0
+offset_bottom = 225.0
+
+[node name="mino_area_2" parent="." instance=ExtResource("4_muexq")]
+offset_left = 780.0
+offset_top = 270.0
+offset_right = 855.0
+offset_bottom = 345.0
+
+[node name="mino_area_3" parent="." instance=ExtResource("4_muexq")]
+offset_left = 780.0
+offset_top = 390.0
+offset_right = 855.0
+offset_bottom = 465.0
+
+[node name="mino_area_4" parent="." instance=ExtResource("4_muexq")]
+offset_left = 780.0
+offset_top = 510.0
+offset_right = 855.0
+offset_bottom = 585.0
+
+[node name="mino_area_0" parent="." instance=ExtResource("4_muexq")]
+offset_left = 780.0
+offset_right = 855.0

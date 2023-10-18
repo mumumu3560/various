@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://ciw71j4nhdnr1"]
+
+[node name="mino_area" type="ColorRect"]
+offset_left = 200.0
+offset_top = 30.0
+offset_right = 275.0
+offset_bottom = 105.0
+color = Color(0.184314, 0.184314, 0.184314, 0.811765)

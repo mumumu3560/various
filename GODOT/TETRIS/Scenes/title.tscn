@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://bgixqwf5dh7k"]
+
+[ext_resource type="Script" path="res://title.gd" id="1_eekkx"]
+[ext_resource type="FontFile" uid="uid://bacokjy6d1t3u" path="res://mplus-1c-regular.ttf_/mplus-1c-regular.ttf" id="1_fy8kk"]
+
+[sub_resource type="Theme" id="Theme_30782"]
+default_font = ExtResource("1_fy8kk")
+default_font_size = 60
+
+[sub_resource type="Theme" id="Theme_vbc5y"]
+default_font = ExtResource("1_fy8kk")
+default_font_size = 32
+
+[node name="Title" type="Node2D"]
+script = ExtResource("1_eekkx")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(28.76, 16.0362)
+color = Color(0, 0, 0, 0.231373)
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+offset_right = 1152.0
+offset_bottom = 344.0
+theme = SubResource("Theme_30782")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+text = "TETRIS
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="CanvasLayer"]
+offset_left = 352.0
+offset_top = 424.0
+offset_right = 800.0
+offset_bottom = 624.0
+theme = SubResource("Theme_vbc5y")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+text = "START
+"
+
+[connection signal="pressed" from="CanvasLayer/Button" to="." method="_on_button_pressed"]
