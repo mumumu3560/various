@@ -26,13 +26,8 @@ cloudflare images(画像投稿、画像配信)
 難しい問題であることが重要ではないので気を付ける。  
 他の人に問題を解いてもらったり、反応をもらったりするとうれしいと思うのでそこらへんにもインセンティブをつけたい。
 称号とかトロフィーとか？
+あまり解かれていない問題を解くとインセンティブがあるようにしたい
 
-### 参考にしたもの、使ったもの
-・Supabaseのログイン周りなど  
-https://zenn.dev/dshukertjr/books/flutter-supabase-chat/viewer/page1  
-https://github.com/flutter-osaka-dev/flutter-chat
-
-https://qiita.com/kokogento/items/87aaf0a0fbc192e51504
 
 ### 注意
 supabaseのapi_urlとanon_keyは.envファイルに格納→dotenvで取得。envファイルはenviedによってdartファイルに変換することで難読化ができる。  
