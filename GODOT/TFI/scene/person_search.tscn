@@ -1,0 +1,235 @@
+[gd_scene load_steps=2 format=3 uid="uid://djjs0w60fe44q"]
+
+[ext_resource type="Script" path="res://person_search.gd" id="1_g8ij7"]
+
+[node name="Person_search" type="Node2D"]
+script = ExtResource("1_g8ij7")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="true_back" type="ColorRect" parent="CanvasLayer"]
+offset_top = 745.0
+offset_right = 401.0
+offset_bottom = 873.0
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
+offset_right = 401.0
+offset_bottom = 750.0
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+custom_minimum_size = Vector2(385, 1500)
+mouse_filter = 2
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="back_ground" type="ColorRect" parent="CanvasLayer/ColorRect"]
+custom_minimum_size = Vector2(385, 1500)
+layout_mode = 0
+offset_right = 393.0
+offset_bottom = 1500.0
+mouse_filter = 2
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="title" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 14.0
+offset_right = 396.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 40
+text = "ユーザー検索"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="back" type="Button" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 20.0
+offset_right = 61.0
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
+text = "⇦"
+
+[node name="region_button" type="OptionButton" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 160.0
+offset_right = 180.0
+offset_bottom = 199.0
+item_count = 8
+popup/item_0/text = "北海道"
+popup/item_0/id = 0
+popup/item_1/text = "東北"
+popup/item_1/id = 1
+popup/item_2/text = "関東"
+popup/item_2/id = 2
+popup/item_3/text = "中部"
+popup/item_3/id = 3
+popup/item_4/text = "近畿"
+popup/item_4/id = 4
+popup/item_5/text = "中国"
+popup/item_5/id = 5
+popup/item_6/text = "四国"
+popup/item_6/id = 6
+popup/item_7/text = "九州"
+popup/item_7/id = 7
+
+[node name="region" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 63.0
+offset_top = 108.0
+offset_right = 145.0
+offset_bottom = 154.0
+theme_override_font_sizes/font_size = 25
+text = "地方"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="prefecture_button" type="OptionButton" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 220.0
+offset_top = 165.0
+offset_right = 366.0
+offset_bottom = 204.0
+
+[node name="prefecture" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 110.0
+offset_right = 343.0
+offset_bottom = 149.0
+theme_override_font_sizes/font_size = 25
+text = "都道府県"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="field" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 65.0
+offset_top = 231.0
+offset_right = 215.0
+offset_bottom = 268.0
+theme_override_font_sizes/font_size = 25
+text = "競技場名"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="split_line1" type="ColorRect" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 1084.0
+offset_right = 387.0
+offset_bottom = 1095.0
+color = Color(0.360784, 0.360784, 0.360784, 1)
+
+[node name="back2" type="Button" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 20.0
+offset_right = 61.0
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
+text = "⇦"
+
+[node name="field_list" type="ItemList" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 311.0
+offset_right = 250.0
+offset_bottom = 435.0
+
+[node name="field_search" type="LineEdit" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 274.0
+offset_right = 235.0
+offset_bottom = 305.0
+
+[node name="search" type="Button" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 270.0
+offset_top = 354.0
+offset_right = 350.0
+offset_bottom = 404.0
+theme_override_font_sizes/font_size = 25
+text = "決定"
+
+[node name="now_field" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 445.0
+offset_right = 253.0
+offset_bottom = 472.0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="age_label" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 490.0
+offset_right = 85.0
+offset_bottom = 521.0
+text = "年齢"
+
+[node name="age_search" type="LineEdit" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 525.0
+offset_right = 104.0
+offset_bottom = 564.0
+
+[node name="spike_search" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 156.0
+offset_top = 493.0
+offset_right = 226.0
+offset_bottom = 521.0
+text = "靴のサイズ"
+
+[node name="spike_size_search" type="LineEdit" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 153.0
+offset_top = 525.0
+offset_right = 230.0
+offset_bottom = 566.0
+
+[node name="person_list" type="ItemList" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 632.0
+offset_right = 388.0
+offset_bottom = 770.0
+
+[node name="spike_name_search" type="LineEdit" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 526.0
+offset_right = 372.0
+offset_bottom = 564.0
+
+[node name="explain_list" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 594.0
+offset_right = 346.0
+offset_bottom = 621.0
+text = "名前:年齢:スパイクのサイズ:スパイクの名前"
+
+[node name="spike_name_label" type="Label" parent="CanvasLayer/ColorRect"]
+layout_mode = 0
+offset_left = 293.0
+offset_top = 492.0
+offset_right = 370.0
+offset_bottom = 521.0
+text = "靴の名前"
+
+[connection signal="item_selected" from="CanvasLayer/ColorRect/region_button" to="." method="_on_region_button_item_selected"]
+[connection signal="item_selected" from="CanvasLayer/ColorRect/prefecture_button" to="." method="_on_prefecture_button_item_selected"]
+[connection signal="pressed" from="CanvasLayer/ColorRect/back2" to="." method="_on_back_pressed"]
+[connection signal="item_selected" from="CanvasLayer/ColorRect/field_list" to="." method="_on_field_list_item_selected"]
+[connection signal="text_changed" from="CanvasLayer/ColorRect/field_search" to="." method="_on_field_search_text_changed"]
+[connection signal="pressed" from="CanvasLayer/ColorRect/search" to="." method="_on_search_pressed"]
+[connection signal="text_changed" from="CanvasLayer/ColorRect/age_search" to="." method="_on_age_search_text_changed"]
+[connection signal="text_changed" from="CanvasLayer/ColorRect/spike_size_search" to="." method="_on_spike_size_search_text_changed"]
+[connection signal="item_selected" from="CanvasLayer/ColorRect/person_list" to="." method="_on_person_list_item_selected"]
+[connection signal="text_changed" from="CanvasLayer/ColorRect/spike_name_search" to="." method="_on_spike_name_search_text_changed"]

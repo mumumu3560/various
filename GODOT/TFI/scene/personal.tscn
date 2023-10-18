@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2cr1o30cc665"]
+
+[ext_resource type="Script" path="res://personal.gd" id="1_wbk6c"]
+
+[node name="Personal" type="Node2D"]
+script = ExtResource("1_wbk6c")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Back" type="ColorRect" parent="CanvasLayer"]
+offset_right = 393.0
+offset_bottom = 873.0
+mouse_filter = 2
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="Profile" type="Button" parent="CanvasLayer"]
+offset_left = 25.0
+offset_top = 34.0
+offset_right = 207.0
+offset_bottom = 182.0
+theme_override_font_sizes/font_size = 40
+text = "プロフィール"
+
+[node name="Like_person" type="Button" parent="CanvasLayer"]
+offset_left = 22.0
+offset_top = 187.0
+offset_right = 229.0
+offset_bottom = 267.0
+theme_override_font_sizes/font_size = 40
+text = "ユーザー検索"
+
+[node name="Field" type="Button" parent="CanvasLayer"]
+offset_left = 29.0
+offset_top = 366.0
+offset_right = 237.0
+offset_bottom = 439.0
+theme_override_font_sizes/font_size = 40
+text = "競技場検索"
+
+[node name="test" type="Button" parent="CanvasLayer"]
+offset_left = 10.0
+offset_top = 591.0
+offset_right = 305.0
+offset_bottom = 686.0
+text = "Test"
+
+[node name="contact" type="Button" parent="CanvasLayer"]
+offset_left = 47.0
+offset_top = 451.0
+offset_right = 221.0
+offset_bottom = 558.0
+theme_override_font_sizes/font_size = 25
+text = "お問い合わせ"
+
+[node name="registered_user" type="Button" parent="CanvasLayer"]
+offset_left = 31.0
+offset_top = 276.0
+offset_right = 201.0
+offset_bottom = 360.0
+theme_override_font_sizes/font_size = 25
+text = "登録したユーザー"
+
+[connection signal="pressed" from="CanvasLayer/Profile" to="." method="_on_profile_pressed"]
+[connection signal="pressed" from="CanvasLayer/Like_person" to="." method="_on_like_person_pressed"]
+[connection signal="pressed" from="CanvasLayer/Field" to="." method="_on_field_pressed"]
+[connection signal="pressed" from="CanvasLayer/test" to="." method="_on_test_pressed"]
+[connection signal="pressed" from="CanvasLayer/contact" to="." method="_on_contact_pressed"]
+[connection signal="pressed" from="CanvasLayer/registered_user" to="." method="_on_registered_user_pressed"]

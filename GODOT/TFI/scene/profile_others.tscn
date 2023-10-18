@@ -1,0 +1,298 @@
+[gd_scene load_steps=2 format=3 uid="uid://crdp3ksyicewg"]
+
+[ext_resource type="Script" path="res://profile_others.gd" id="1_g6t00"]
+
+[node name="profile_others" type="Node2D"]
+script = ExtResource("1_g6t00")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
+offset_right = 401.0
+offset_bottom = 800.0
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/ScrollContainer"]
+custom_minimum_size = Vector2(393, 1500)
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="Back" type="ColorRect" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_right = 393.0
+offset_bottom = 1252.0
+mouse_filter = 2
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="back" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 36.0
+offset_right = 55.0
+offset_bottom = 86.0
+theme_override_font_sizes/font_size = 30
+text = "⇐"
+
+[node name="Name" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 182.0
+offset_right = 254.0
+offset_bottom = 221.0
+theme_override_font_sizes/font_size = 23
+text = "aaaaa"
+vertical_alignment = 2
+
+[node name="Age" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 287.0
+offset_right = 205.0
+offset_bottom = 326.0
+theme_override_font_sizes/font_size = 23
+text = "aaaaaa"
+vertical_alignment = 2
+
+[node name="Event" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 400.0
+offset_right = 145.0
+offset_bottom = 435.0
+theme_override_font_sizes/font_size = 23
+text = "aaaaaaa"
+vertical_alignment = 2
+
+[node name="Spike_size" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 473.0
+offset_right = 157.0
+offset_bottom = 523.0
+theme_override_font_sizes/font_size = 23
+text = "aaaaa"
+vertical_alignment = 2
+
+[node name="spike_name" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 568.0
+offset_right = 182.0
+offset_bottom = 615.0
+theme_override_font_sizes/font_size = 23
+text = "aaaaaaa"
+vertical_alignment = 2
+
+[node name="Title" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 66.0
+offset_top = 25.0
+offset_right = 320.0
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
+text = "プロフィール"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Name_tag" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 136.0
+offset_right = 75.0
+offset_bottom = 176.0
+theme_override_font_sizes/font_size = 25
+text = "氏名"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Age_tag" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_top = 238.0
+offset_right = 70.0
+offset_bottom = 278.0
+theme_override_font_sizes/font_size = 25
+text = "年齢"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Event_tag" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 332.0
+offset_right = 73.0
+offset_bottom = 372.0
+theme_override_font_sizes/font_size = 25
+text = "種目"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spike_size_tag" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 435.0
+offset_right = 163.0
+offset_bottom = 475.0
+theme_override_font_sizes/font_size = 25
+text = "スパイクのサイズ"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spike_name_tag" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 525.0
+offset_right = 259.0
+offset_bottom = 565.0
+theme_override_font_sizes/font_size = 25
+text = "スパイクの名前"
+vertical_alignment = 1
+
+[node name="Field_add" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 713.0
+offset_right = 177.0
+offset_bottom = 757.0
+
+[node name="Field_list_tag" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 719.0
+offset_right = 189.0
+offset_bottom = 759.0
+theme_override_font_sizes/font_size = 25
+text = "登録した競技場"
+vertical_alignment = 1
+
+[node name="Field_button1" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+visible = false
+layout_mode = 0
+offset_left = 2.0
+offset_top = 769.0
+offset_right = 193.0
+offset_bottom = 788.0
+
+[node name="Field_button2" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+visible = false
+layout_mode = 0
+offset_top = 801.0
+offset_right = 196.0
+offset_bottom = 822.0
+
+[node name="Field_button3" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+visible = false
+layout_mode = 0
+offset_left = 4.0
+offset_top = 834.0
+offset_right = 199.0
+offset_bottom = 854.0
+
+[node name="Field_list" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 765.0
+offset_right = 251.0
+offset_bottom = 864.0
+theme_override_font_sizes/font_size = 20
+text = "競技場
+競技場
+競技場"
+
+[node name="split_line1" type="ColorRect" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 219.0
+offset_right = 393.0
+offset_bottom = 223.0
+color = Color(0.360784, 0.360784, 0.360784, 1)
+
+[node name="split_line2" type="ColorRect" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 324.0
+offset_right = 388.0
+offset_bottom = 328.0
+color = Color(0.360784, 0.360784, 0.360784, 1)
+
+[node name="split_line3" type="ColorRect" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 435.0
+offset_right = 388.0
+offset_bottom = 439.0
+color = Color(0.360784, 0.360784, 0.360784, 1)
+
+[node name="split_line4" type="ColorRect" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 526.0
+offset_right = 393.0
+offset_bottom = 530.0
+color = Color(0.360784, 0.360784, 0.360784, 1)
+
+[node name="split_line5" type="ColorRect" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 616.0
+offset_right = 393.0
+offset_bottom = 620.0
+color = Color(0.360784, 0.360784, 0.360784, 1)
+
+[node name="self_intro_label" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 888.0
+offset_right = 111.0
+offset_bottom = 925.0
+theme_override_font_sizes/font_size = 25
+text = "自己紹介"
+
+[node name="self_intro" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 932.0
+offset_right = 371.0
+offset_bottom = 1123.0
+theme_override_font_sizes/font_size = 23
+text = "aaaaaaaaaaaa"
+
+[node name="share_num_label" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 625.0
+offset_right = 168.0
+offset_bottom = 662.0
+theme_override_font_sizes/font_size = 25
+text = "シェア回数"
+
+[node name="Label" type="Label" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 659.0
+offset_right = 127.0
+offset_bottom = 693.0
+theme_override_font_sizes/font_size = 20
+text = "0回"
+horizontal_alignment = 1
+
+[node name="like_button" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 275.0
+offset_top = 89.0
+offset_right = 351.0
+offset_bottom = 132.0
+theme_override_font_sizes/font_size = 25
+text = "追加"
+
+[node name="chat_button" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 270.0
+offset_top = 140.0
+offset_right = 356.0
+offset_bottom = 186.0
+theme_override_font_sizes/font_size = 25
+text = "チャット"
+
+[connection signal="pressed" from="CanvasLayer/ScrollContainer/ColorRect/back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="CanvasLayer/ScrollContainer/ColorRect/like_button" to="." method="_on_like_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/ScrollContainer/ColorRect/chat_button" to="." method="_on_chat_button_pressed"]

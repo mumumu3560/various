@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccfy7b1lcgilq"]
+
+[ext_resource type="Script" path="res://login.gd" id="1_gub7t"]
+
+[node name="login" type="Node2D"]
+script = ExtResource("1_gub7t")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Back" type="ColorRect" parent="CanvasLayer"]
+offset_right = 393.0
+offset_bottom = 873.0
+mouse_filter = 2
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="LoginButton" type="Button" parent="CanvasLayer"]
+offset_left = 18.0
+offset_top = 358.0
+offset_right = 206.0
+offset_bottom = 452.0
+theme_override_font_sizes/font_size = 40
+text = "Sign in"
+
+[node name="E_mail" type="LineEdit" parent="CanvasLayer"]
+offset_left = 28.0
+offset_top = 150.0
+offset_right = 347.0
+offset_bottom = 197.0
+
+[node name="Password" type="LineEdit" parent="CanvasLayer"]
+offset_left = 32.0
+offset_top = 270.0
+offset_right = 357.0
+offset_bottom = 325.0
+
+[node name="E-mail_labe" type="Label" parent="CanvasLayer"]
+offset_left = 36.0
+offset_top = 84.0
+offset_right = 144.0
+offset_bottom = 125.0
+theme_override_font_sizes/font_size = 30
+text = "E-mail"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Password_label" type="Label" parent="CanvasLayer"]
+offset_left = 42.0
+offset_top = 206.0
+offset_right = 150.0
+offset_bottom = 251.0
+theme_override_font_sizes/font_size = 30
+text = "password"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="login_save" type="Button" parent="CanvasLayer"]
+offset_left = 205.0
+offset_top = 363.0
+offset_right = 371.0
+offset_bottom = 446.0
+theme_override_font_sizes/font_size = 23
+text = "ログイン維持"
+
+[node name="debug_label" type="Label" parent="CanvasLayer"]
+offset_left = 14.0
+offset_top = 462.0
+offset_right = 382.0
+offset_bottom = 663.0
+text = "ここで見る"
+
+[connection signal="pressed" from="CanvasLayer/LoginButton" to="." method="_on_login_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/login_save" to="." method="_on_login_save_pressed"]

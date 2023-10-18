@@ -1,0 +1,133 @@
+[gd_scene load_steps=2 format=3 uid="uid://q0bsrpfnda78"]
+
+[ext_resource type="Script" path="res://registered_user.gd" id="1_2w3df"]
+
+[node name="registered_user" type="Node2D"]
+script = ExtResource("1_2w3df")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
+offset_right = 401.0
+offset_bottom = 873.0
+horizontal_scroll_mode = 0
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/ScrollContainer"]
+custom_minimum_size = Vector2(393, 1500)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="back_ground" type="ColorRect" parent="CanvasLayer/ScrollContainer/ColorRect"]
+custom_minimum_size = Vector2(393, 1500)
+layout_mode = 0
+offset_right = 393.0
+offset_bottom = 1500.0
+mouse_filter = 2
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="back" type="Button" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 20.0
+offset_right = 61.0
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
+text = "⇦"
+
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 63.0
+offset_top = 128.0
+offset_right = 345.0
+offset_bottom = 273.0
+item_count = 31
+popup/item_0/text = "1"
+popup/item_0/id = 0
+popup/item_1/text = "2"
+popup/item_1/id = 1
+popup/item_2/text = "3"
+popup/item_2/id = 2
+popup/item_3/text = "4"
+popup/item_3/id = 3
+popup/item_4/text = "5"
+popup/item_4/id = 4
+popup/item_5/text = "6"
+popup/item_5/id = 5
+popup/item_6/text = "7"
+popup/item_6/id = 6
+popup/item_7/text = "8"
+popup/item_7/id = 7
+popup/item_8/text = "9"
+popup/item_8/id = 8
+popup/item_9/text = "10"
+popup/item_9/id = 9
+popup/item_10/text = "11"
+popup/item_10/id = 10
+popup/item_11/text = "12"
+popup/item_11/id = 11
+popup/item_12/text = "13"
+popup/item_12/id = 12
+popup/item_13/text = "14"
+popup/item_13/id = 13
+popup/item_14/text = "15"
+popup/item_14/id = 14
+popup/item_15/text = ""
+popup/item_15/id = 15
+popup/item_16/text = ""
+popup/item_16/id = 16
+popup/item_17/text = ""
+popup/item_17/id = 17
+popup/item_18/text = ""
+popup/item_18/id = 18
+popup/item_19/text = ""
+popup/item_19/id = 19
+popup/item_20/text = ""
+popup/item_20/id = 20
+popup/item_21/text = ""
+popup/item_21/id = 21
+popup/item_22/text = ""
+popup/item_22/id = 22
+popup/item_23/text = ""
+popup/item_23/id = 23
+popup/item_24/text = ""
+popup/item_24/id = 24
+popup/item_25/text = ""
+popup/item_25/id = 25
+popup/item_26/text = ""
+popup/item_26/id = 26
+popup/item_27/text = ""
+popup/item_27/id = 27
+popup/item_28/text = ""
+popup/item_28/id = 28
+popup/item_29/text = ""
+popup/item_29/id = 29
+popup/item_30/text = ""
+popup/item_30/id = 30
+
+[node name="ItemList" type="ItemList" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 308.0
+offset_right = 390.0
+offset_bottom = 372.0
+item_count = 3
+max_columns = 5
+item_0/text = "江の島水族館"
+item_1/text = "陸上競技場"
+item_2/text = "10"
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 276.0
+offset_right = 364.0
+offset_bottom = 307.0
+
+[node name="CheckBox" type="CheckBox" parent="CanvasLayer/ScrollContainer/ColorRect"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 533.0
+offset_right = 141.0
+offset_bottom = 620.0
+
+[connection signal="pressed" from="CanvasLayer/ScrollContainer/ColorRect/back" to="." method="_on_back_pressed"]

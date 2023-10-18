@@ -1,0 +1,205 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5lc3gvemo5hy"]
+
+[ext_resource type="Script" path="res://field_search.gd" id="1_ehov2"]
+
+[node name="Field_search" type="Node2D"]
+script = ExtResource("1_ehov2")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="back_ground" type="ColorRect" parent="CanvasLayer"]
+custom_minimum_size = Vector2(393, 1500)
+offset_right = 393.0
+offset_bottom = 1500.0
+mouse_filter = 2
+color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[node name="title" type="Label" parent="CanvasLayer"]
+offset_left = 4.0
+offset_top = 14.0
+offset_right = 396.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 40
+text = "競技場検索"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="back" type="Button" parent="CanvasLayer"]
+offset_left = 2.0
+offset_top = 20.0
+offset_right = 61.0
+offset_bottom = 56.0
+theme_override_font_sizes/font_size = 40
+text = "⇦"
+
+[node name="region_button" type="OptionButton" parent="CanvasLayer"]
+offset_left = 25.0
+offset_top = 160.0
+offset_right = 180.0
+offset_bottom = 199.0
+item_count = 8
+popup/item_0/text = "北海道"
+popup/item_0/id = 0
+popup/item_1/text = "東北"
+popup/item_1/id = 1
+popup/item_2/text = "関東"
+popup/item_2/id = 2
+popup/item_3/text = "中部"
+popup/item_3/id = 3
+popup/item_4/text = "近畿"
+popup/item_4/id = 4
+popup/item_5/text = "中国"
+popup/item_5/id = 5
+popup/item_6/text = "四国"
+popup/item_6/id = 6
+popup/item_7/text = "九州"
+popup/item_7/id = 7
+
+[node name="region" type="Label" parent="CanvasLayer"]
+offset_left = 63.0
+offset_top = 108.0
+offset_right = 145.0
+offset_bottom = 154.0
+theme_override_font_sizes/font_size = 25
+text = "地方"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="prefecture_button" type="OptionButton" parent="CanvasLayer"]
+offset_left = 220.0
+offset_top = 165.0
+offset_right = 366.0
+offset_bottom = 204.0
+
+[node name="prefecture" type="Label" parent="CanvasLayer"]
+offset_left = 240.0
+offset_top = 110.0
+offset_right = 343.0
+offset_bottom = 149.0
+theme_override_font_sizes/font_size = 25
+text = "都道府県"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="field" type="Label" parent="CanvasLayer"]
+offset_left = 61.0
+offset_top = 211.0
+offset_right = 211.0
+offset_bottom = 248.0
+theme_override_font_sizes/font_size = 25
+text = "競技場名"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="explain3" type="Label" parent="CanvasLayer"]
+offset_left = 255.0
+offset_top = 311.0
+offset_right = 388.0
+offset_bottom = 342.0
+text = "※競技場を仮登録"
+
+[node name="add_button" type="Button" parent="CanvasLayer"]
+offset_left = 260.0
+offset_top = 345.0
+offset_right = 381.0
+offset_bottom = 402.0
+theme_override_font_sizes/font_size = 25
+text = "追加"
+
+[node name="explain2" type="Label" parent="CanvasLayer"]
+offset_left = 9.0
+offset_top = 447.0
+offset_right = 232.0
+offset_bottom = 509.0
+theme_override_font_sizes/font_size = 20
+text = "競技場(仮登録3つまで)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="register_list" type="ItemList" parent="CanvasLayer"]
+offset_left = 33.0
+offset_top = 513.0
+offset_right = 237.0
+offset_bottom = 602.0
+
+[node name="explain4" type="Label" parent="CanvasLayer"]
+offset_left = 255.0
+offset_top = 464.0
+offset_right = 369.0
+offset_bottom = 495.0
+text = "※競技場の削除"
+
+[node name="delete" type="Button" parent="CanvasLayer"]
+offset_left = 263.0
+offset_top = 498.0
+offset_right = 366.0
+offset_bottom = 541.0
+theme_override_font_sizes/font_size = 25
+text = "削除"
+
+[node name="split_line1" type="ColorRect" parent="CanvasLayer"]
+offset_left = 8.0
+offset_top = 445.0
+offset_right = 393.0
+offset_bottom = 449.0
+color = Color(0.360784, 0.360784, 0.360784, 1)
+
+[node name="split_line2" type="ColorRect" parent="CanvasLayer"]
+offset_left = 4.0
+offset_top = 614.0
+offset_right = 389.0
+offset_bottom = 622.0
+color = Color(0.239216, 0.239216, 0.239216, 1)
+
+[node name="field_list" type="ItemList" parent="CanvasLayer"]
+offset_left = 33.0
+offset_top = 288.0
+offset_right = 251.0
+offset_bottom = 435.0
+
+[node name="field_search" type="LineEdit" parent="CanvasLayer"]
+offset_left = 59.0
+offset_top = 252.0
+offset_right = 238.0
+offset_bottom = 283.0
+
+[node name="explain5" type="Label" parent="CanvasLayer"]
+offset_left = 9.0
+offset_top = 631.0
+offset_right = 232.0
+offset_bottom = 693.0
+theme_override_font_sizes/font_size = 20
+text = "プロフィールに登録された競技場"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="profile_fields" type="ItemList" parent="CanvasLayer"]
+offset_left = 11.0
+offset_top = 682.0
+offset_right = 246.0
+offset_bottom = 810.0
+
+[node name="decide_field" type="Button" parent="CanvasLayer"]
+offset_left = 268.0
+offset_top = 553.0
+offset_right = 366.0
+offset_bottom = 597.0
+theme_override_font_sizes/font_size = 25
+text = "決定"
+
+[node name="search_label" type="Label" parent="CanvasLayer"]
+offset_left = 10.0
+offset_top = 252.0
+offset_right = 55.0
+offset_bottom = 278.0
+text = "検索:"
+
+[connection signal="pressed" from="CanvasLayer/back" to="." method="_on_back_pressed"]
+[connection signal="item_selected" from="CanvasLayer/region_button" to="." method="_on_region_button_item_selected"]
+[connection signal="item_selected" from="CanvasLayer/prefecture_button" to="." method="_on_prefecture_button_item_selected"]
+[connection signal="pressed" from="CanvasLayer/add_button" to="." method="_on_add_button_pressed"]
+[connection signal="item_selected" from="CanvasLayer/register_list" to="." method="_on_register_list_item_selected"]
+[connection signal="pressed" from="CanvasLayer/delete" to="." method="_on_delete_pressed"]
+[connection signal="item_selected" from="CanvasLayer/field_list" to="." method="_on_field_list_item_selected"]
+[connection signal="text_changed" from="CanvasLayer/field_search" to="." method="_on_field_search_text_changed"]
+[connection signal="pressed" from="CanvasLayer/decide_field" to="." method="_on_decide_field_pressed"]
