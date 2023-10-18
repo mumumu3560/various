@@ -18,7 +18,7 @@ cloudflare images(画像投稿、画像配信)
 
 
 ### ・現在    
-画像投稿と新着順で他の人の投稿を見れる。
+画像投稿と新着順で他の人の投稿を見られる。
 
 
 ### ・改善案、やること  
@@ -31,6 +31,8 @@ cloudflare images(画像投稿、画像配信)
 ・Supabaseのログイン周りなど  
 https://zenn.dev/dshukertjr/books/flutter-supabase-chat/viewer/page1  
 https://github.com/flutter-osaka-dev/flutter-chat
+
+https://qiita.com/kokogento/items/87aaf0a0fbc192e51504
 
 ### 注意
 supabaseのapi_urlとanon_keyは.envファイルに格納→dotenvで取得。envファイルはenviedによってdartファイルに変換することで難読化ができる。  
