@@ -28,8 +28,8 @@ cloudflare images(画像投稿、画像配信)
 称号とかトロフィーとか？
 あまり解かれていない問題を解くとインセンティブがあるようにしたい
 エラーハンドリング   
-androidのプッシュ通知を実装したい。→firebaseのFCMかOneSignal？でやってみたい。 
-OneSignal+Supabase+flutterでできそう？
+androidのプッシュ通知を実装したい。
+OneSignal+Supabase+flutter+FCMでできそう？
 解かれたり評価された際(supabaseのデータベース変更時)
 
 
