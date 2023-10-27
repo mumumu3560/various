@@ -8,6 +8,13 @@ import 'package:share_your_q/image_operations/image_select.dart';
 import 'package:share_your_q/image_operations/image_upload.dart';
 import 'package:share_your_q/utils/various.dart';
 
+
+//問題を作るページ
+
+//TODO textformfieldの長さの制限を考える。
+//Supabaseではtext型だがこれはvarchar(10)になおす。
+//textは最大で2GBまで入るので問題がある(flutterのtextformfieldの制限変えられる)
+
 class CreatePage extends StatefulWidget {
   @override
   _CreatePageState createState() => _CreatePageState();
@@ -21,6 +28,7 @@ class _CreatePageState extends State<CreatePage> {
   //問題文の画像と解説の画像の数を表す。
   int problemIcount = 1;
   int commentIcount = 1;
+
 
   final userId = supabase.auth.currentUser!.id;
 
@@ -243,7 +251,7 @@ class _CreatePageState extends State<CreatePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Image Display Example'),
+        title: const Text('作成ページ'),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -257,6 +265,7 @@ class _CreatePageState extends State<CreatePage> {
                   children: [
                     // タイトルの入力フォーム
                     TextFormField(
+                      maxLength: 30,
                       initialValue: problemTitle,
                       onChanged: (value) {
                         setState(() {
@@ -308,6 +317,7 @@ class _CreatePageState extends State<CreatePage> {
 
                     // タグの入力フォーム
                     TextFormField(
+                      maxLength: 10,
                       controller: _tagController,
                       onChanged: (value) {
                         
@@ -548,10 +558,18 @@ class _CreatePageState extends State<CreatePage> {
 
         ElevatedButton(
           onPressed: () async {
+
+            showLoadingDialog(context,"処理中...");
+            
             await sendInfoToSupabase();
 
             // 画像をアップロード
             await getImageUploadUrls();
+
+            // ダイアログを閉じる
+            Navigator.of(context).pop();
+
+            showFinisheDialog(context, "Great!", "投稿が完了しました！！");
 
             setState(() {
               isConfirmationMode = false;
@@ -559,6 +577,7 @@ class _CreatePageState extends State<CreatePage> {
           },
           child: const Text("確認して投稿"),
         ),
+
         ElevatedButton(
           onPressed: () {
             setState(() {
