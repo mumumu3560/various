@@ -19,6 +19,7 @@ cloudflare images(画像投稿、画像配信)
 
 ### ・現在    
 画像投稿ができる。新着順で他の人の投稿を見られる。
+いいね通知の実装。Supabase Webhooks→OneSignal
 
 
 ### ・改善案、やること  
