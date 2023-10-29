@@ -3,33 +3,84 @@ import 'package:share_your_q/utils/various.dart';
 import 'package:share_your_q/image_operations/image_display.dart';
 
 import "package:share_your_q/pages/display_page.dart";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+
 
 class ImageListDisplay extends StatefulWidget {
+
+  final String? subject;
+  final String? level;
+  final String? method;
+  final List<String>? tags;
+  final String? title;
+
+  const ImageListDisplay({
+    Key? key,
+    required this.subject,
+    required this.level,
+    required this.method,
+    required this.tags,
+    required this.title,
+  }) :super(key: key);
+
   @override
-  _ImageListDisplayState createState() => _ImageListDisplayState();
+  ImageListDisplayState createState() => ImageListDisplayState();
+
 }
-class _ImageListDisplayState extends State<ImageListDisplay> {
+
+
+class ImageListDisplayState extends State<ImageListDisplay> {
   List<Map<String, dynamic>> imageData = [];
-  int currentPage = 1;
-  int itemsPerPage = 10;
   bool isLoading = true;
-  int maxPage = 1;
 
   @override
   void initState() {
     super.initState();
-    fetchData(currentPage);
+    fetchData();
   }
 
-  Future<void> fetchData(int page) async {
+  Future<void> fetchData() async {
     try {
-      final response = await supabase
-          .from("image_data")
-          .select<List<Map<String, dynamic>>>()
-          .order('created_at');
+      //items: <String>['新着', '未発掘', 'いいね順', "ランダム"]
+
+      /*
+
+      response = await supabase
+            .from("image_data")
+            .select<List<Map<String, dynamic>>>()
+            .like("subject", widget.subject as String)
+            .like("level", widget.level as String)
+            .eq("watched", 0)
+            .order('created_at');
+       */
+
+      final List<Map<String, dynamic>> response;
+
+      //Conditional Chaining
+      //https://supabase.com/docs/reference/dart/using-filters
+      var query = supabase.from("image_data").select<List<Map<String, dynamic>>>();
+      if(widget.level != "全て") query = query.eq("level", widget.level as String);
+      if(widget.subject != "全て") query = query.eq("subject", widget.subject as String);
+      if(widget.method == "未発掘") query = query.eq("watched", 0);
+
+      if(widget.method == "新着"){
+        response = await query.order("created_at", ascending: false);
+      }
+      else if(widget.method == "いいね順"){
+        response = await query.order("likes", ascending: false);
+      }
+      else if(widget.method == "ランダム"){
+        response = await query.order("created_at", ascending: false);
+        response.shuffle();
+      }
+      else{
+        response = await query.order("created_at", ascending: false);
+      }
+
 
       setState(() {
-        maxPage = (response.length / itemsPerPage).ceil();
         isLoading = false;
         imageData = response;
       });
@@ -38,26 +89,12 @@ class _ImageListDisplayState extends State<ImageListDisplay> {
     }
   }
 
-  //TODO これは使うかがわからない。今のところlistをスクロールするので完了しているため
-  void loadNextPage() {
-    currentPage++;
-    fetchData(currentPage);
-  }
-
-  //TODO これは使うかがわからない。今のところlistをスクロールするので完了しているため
-  void loadPreviousPage() {
-    if (currentPage > 1) {
-      currentPage--;
-      fetchData(currentPage);
-    }
-  }
-
   // リストをリロードするメソッド
   void reloadList() {
     setState(() {
       isLoading = true;
     });
-    fetchData(currentPage); // リロード時にデータを再取得
+    fetchData(); // リロード時にデータを再取得
   }
 
   @override
@@ -66,62 +103,72 @@ class _ImageListDisplayState extends State<ImageListDisplay> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('新着'), // アプリバーに表示するタイトル
+        title: Text(widget.title as String), // アプリバーに表示するタイトル
         actions: [
           IconButton(
             onPressed: reloadList,
-            icon: Icon(Icons.refresh), // リロードアイコン
+            icon: const Icon(Icons.refresh), // リロードアイコン
           ),
         ],
       ),
-      body: Container(
-        width: SizeConfig.blockSizeHorizontal! * 98,
-        //height: SizeConfig.blockSizeVertical! * 90,
-        
-        child: Column(
-          children: [
-            isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: imageData.length,
-                      itemBuilder: (context, index) {
-                        final item = imageData[index];
-                        return MyListItem(item: item);
-                      },
-                    ),
-                  ),
-          ],
+      body: Center(
+        child: Container(
+          //中央寄り
+          alignment: Alignment.center,
+          width: SizeConfig.blockSizeHorizontal! * 90,
+          //height: SizeConfig.blockSizeVertical! * 90,
+          
+          child: Column(
+            children: [
+
+              if(imageData.isEmpty && !isLoading)
+                const Center(child: Text("データがありません。"))
+              else 
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Expanded(
+                        child: ListView.builder(
+                          itemCount: imageData.length,
+                          itemBuilder: (context, index) {
+                            final item = imageData[index];
+                            return MyListItem(item: item);
+                          },
+                        ),
+                      ),
+              
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-
+//ここはsupabaseから取得したデータの内容を表示するためのウィジェット
 class MyListItem extends StatelessWidget {
   final Map<String, dynamic> item;
+
 
   const MyListItem({
 
     Key? key,
-    required this.item
+    required this.item,
     
   }): super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final String imageUrlCX =
+        '${item["user_id"]}XCommentXnum${item["num"].toString()}XPnum${item["P_I_count"].toString()}XCnum${item["C_I_count"].toString()}';
+    final String imageUrlPX =
+        '${item["user_id"]}XproblemXnum${item["num"].toString()}XPnum${item["P_I_count"].toString()}XCnum${item["C_I_count"].toString()}';
+    
+    final String deliveryURL = dotenv.get('CLOUDFLARE_DELIVERY_URL');
+    final String imageUrlC = '$deliveryURL/$imageUrlCX/public';
+    final String imageUrlP = '$deliveryURL/$imageUrlPX/public';
 
-    //imageUrlC_pre、imageUrlCを分けたのは長すぎるから
-    final String imageUrlC_pre =
-              '${item["user_id"]}XCommentXnum${item["num"].toString()}XPnum${item["P_I_count"].toString()}XCnum${item["C_I_count"].toString()}';
-    final String imageUrlP_pre =
-              '${item["user_id"]}XproblemXnum${item["num"].toString()}XPnum${item["P_I_count"].toString()}XCnum${item["C_I_count"].toString()}';
-
-          final String imageUrlC = '<解説の画像のURL>';
-          final String imageUrlP = '<問題の画像のURL>';
-
-          final String imageUrlEx = "<画像が読み込まれなかった場合>";
+    final String imageUrlEx = "${deliveryURL}/728235a5-f792-4f3e-e4f8-b67ec469d500/public";
+    
     return Card(
       child: ListTile(
         dense: true,
@@ -138,45 +185,76 @@ class MyListItem extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item['title']),
+
+            Text(
+              "[${item['title']}]",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              )
+            ),
+
+            item["explain"] != null 
+              ? Text(
+                item['explain'],
+                style: const TextStyle(
+                  fontSize: 16,
+                ),) 
+              : const Text("説明文なし"),
+            
+
+            
             Text(item['level']),
             Text(item['subject']),
             Row(
               children: [
 
-                if (item['tag1'] != null) Text("#" + item['tag1'] ),
-                if (item['tag2'] != null) Text("#" +item['tag2']),
-                if (item['tag3'] != null) Text("#" +item['tag3']),
-                if (item['tag4'] != null) Text("#" +item['tag4']),
-                if (item['tag5'] != null) Text("#" +item['tag5']),                
+                if (item['tag1'] != null) Text("#"+item['tag1'] ),
+                if (item['tag2'] != null) Text("#"+item['tag2']),
+                if (item['tag3'] != null) Text("#"+item['tag3']),
+                if (item['tag4'] != null) Text("#"+item['tag4']),
+                if (item['tag5'] != null) Text("#"+item['tag5']),                
             
             ]),
 
-            if (item['explain'] != null) Text(item['explain'])
-            else Text("説明文なし"),
-
+            Row(
+              children: [
+                const Icon(Icons.visibility,color: Colors.white,),
+                Text(item["watched"].toString()),
+                formSpacer,
+                const Icon(Icons.favorite, color: Colors.white,),
+                Text(item["likes"].toString()),
+                formSpacer,
+                const Icon(Icons.chat, color: Colors.white,),
+                Text(item["likes"].toString()),
+              ],
+            ),
 
           ],
         ),
         onTap: () {
+
+          print(item["tag1"]);
+          print(item["tag2"]);
+          print(item["tag3"]);
+          print(item["tag4"]);
+          print(item["tag5"]);
+          print(item["level"]);
+          print(item["subject"]);
+          print(item["image_data_id"]);
+          print(item["user_id"]);
+          print(item["num"]);
+          print(item["explain"]);
+
           
           Navigator.of(context).push(
 
-            /*
-            MaterialPageRoute(
-              builder: (context) => ImageDisplayScreen(
-                imageUrl: imageUrl,
-              ),
-            ),
-            */
-
-            /*
-            
-             */
             MaterialPageRoute(
               builder: (context) => DisplayPage(
                 title: item['title'],
 
+                image_id: item["image_data_id"],
+                image_own_user_id: item["user_id"],
                 tag1: item['tag1'],
                 tag2: item['tag2'],
                 tag3: item['tag3'],
@@ -191,29 +269,11 @@ class MyListItem extends StatelessWidget {
                 imageUrlP: imageUrlP,
                 imageUrlC: imageUrlC,
 
+                num: item['num'],
+
                 explanation: item['explain'],
               ),
 
-              /*
-              
-              builder: (context) => ProblemViewWidget(
-                title: item['title']!,
-
-                tag1: item['tag1']!,
-                tag2: item['tag2']!,
-                tag3: item['tag3']!,
-                tag4: item['tag4']!,
-                tag5: item['tag5']!,
-
-                //tags: item['tags'],
-                level: item['level']!,
-                subject: item['subject']!,
-                image1: null,
-                image2: null,
-                imageUrlP: imageUrlP,
-                imageUrlC: imageUrlC,
-              ),
-               */
             ),
 
 
