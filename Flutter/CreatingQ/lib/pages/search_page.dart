@@ -5,6 +5,7 @@ import "package:share_your_q/utils/various.dart";
 import "package:share_your_q/pages/display_page.dart";
 
 import "package:share_your_q/image_operations/test_override.dart";
+import "package:share_your_q/image_operations/image_list_display.dart";
 
 class SearchPage extends StatefulWidget {
   @override
@@ -16,9 +17,11 @@ class _SearchPageState extends State<SearchPage> {
 
 
   //教科、数学など
-  String? subject;
+  String? subject = "全て";
   //小学校、中学校などいつ習ったものか
-  String? level;
+  String? level = "全て";
+  //検索方法
+  String? method = "新着";
   //タグ
   List<String> tags = [];
 
@@ -52,9 +55,16 @@ class _SearchPageState extends State<SearchPage> {
       }
 
     } else {
+
+      if(tagInput.isEmpty){
+        context.showErrorSnackBar(message: 'タグを入力してください');
+        return;
+      }
       if(!jad){
         context.showErrorSnackBar(message: 'タグは5つまでしか追加できません');
+        return;
       }
+      
       
     }
 
@@ -69,6 +79,10 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  void search(){
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +94,11 @@ class _SearchPageState extends State<SearchPage> {
 
 
         child: Center(
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
+            
             children: <Widget>[
                 Column(
 
@@ -96,14 +112,14 @@ class _SearchPageState extends State<SearchPage> {
                           level = value;
                         });
                       },
-                      items: <String>['小学校', '中学校', '高校', '大学', 'その他']
+                      items: <String>["全て", '小学校', '中学校', '高校', '大学', 'その他']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
                         );
                       }).toList(),
-                      hint: const Text('レベルを選択してください'),
+                      hint: const Text('レベル選択'),
                     ),
 
                     
@@ -114,17 +130,39 @@ class _SearchPageState extends State<SearchPage> {
                           subject = value;
                         });
                       },
-                      items: <String>['数学', '物理', '化学', 'その他']
+                      items: <String>["全て", '数学', '物理', '化学', 'その他']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
                         );
                       }).toList(),
-                      hint: const Text('ジャンルを選択してください'),
+                      hint: const Text('ジャンル選択'),
                     ),
 
 
+                    // 検索方法の選択
+                    DropdownButton<String>(
+                      value: method,
+                      onChanged: (value) {
+                        setState(() {
+                          method = value;
+                        });
+                      },
+                      items: <String>['新着', '未発掘', 'いいね順', "ランダム"]
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      hint: const Text('並び替え方法の選択'),
+                    ),
+
+                    
+
+
+                    /*
                     // タグの入力フォーム
                     TextFormField(
                       maxLength: 10,
@@ -139,8 +177,10 @@ class _SearchPageState extends State<SearchPage> {
                         labelText: '検索したいタグを入力',
                       ),
                     ),
+                     */
 
 
+                    /*
                     ElevatedButton(
                       onPressed: addTag,
                       child: Text("タグを追加"),
@@ -158,29 +198,23 @@ class _SearchPageState extends State<SearchPage> {
                       )
                     .toList(),
                     ),
+                     */
+
+
+                    ElevatedButton(
+                      onPressed:(){
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ImageListDisplay(title: method, subject: subject, level: level, method: method,tags: [],), // ImageDisplayに遷移
+                          ),
+                        );
+                      },
+                      child: Text("検索"),
+                    ),
 
 
                   ],
                 ),
-
-                formSpacer,
-
-                Container(
-                  height: SizeConfig.blockSizeVertical! * 90, // 任意の高さを設定
-                  child: CustomImageListDisplay(
-                    level: level,
-                    subject: subject,
-                    tag1: "0",
-                    tag2: "0",
-                    tag3: "0",
-                    tag4: "0",
-                    tag5: "0",
-                    title: "検索結果",
-                    method: "search",
-                  )
-
-                ),
-
 
             ],
 
