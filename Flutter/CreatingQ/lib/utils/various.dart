@@ -2,12 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 
+//https://www.kamo-it.org/blog/flutter-extension/
 //https://zenn.dev/dshukertjr/books/flutter-supabase-chat/viewer/page1
 
 final supabase = Supabase.instance.client;
 
 //プリローダー
 const preloader = Center(child: CircularProgressIndicator(color: Colors.orange));
+
+// ローディングスピナーを含むダイアログを表示する関数
+void showLoadingDialog(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // ユーザーがダイアログ外をタップして閉じられないようにする
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(color: Colors.orange),
+            SizedBox(width: 20),
+            Text(message), // ローディング中のメッセージ
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void showFinisheDialog(BuildContext context, String title, String message) {
+  // 完了メッセージを表示
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // ダイアログを閉じる
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
 const formSpacer = SizedBox(width: 16, height: 16);
 
@@ -16,6 +57,7 @@ const formPadding = EdgeInsets.symmetric(vertical: 20, horizontal: 16);
 
 //予期せぬエラーが起きた際のエラーメッセージ
 const unexpectedErrorMessage = '予期せぬエラーが起きました';
+
 
 
 extension ShowSnackBar on BuildContext {
@@ -95,8 +137,54 @@ class ProblemViewWidget extends StatefulWidget {
 }
 
 class _ProblemViewWidgetState extends State<ProblemViewWidget> {
+  late ImageStream _imageStream1;
+  late ImageStream _imageStream2;
+
   bool showProblemImage = false;
   bool showExplanationImage = false;
+
+  bool isLoadingImage1 = true; // 1つ目の画像の読み込み状態を管理
+  bool isLoadingImage2 = true; // 2つ目の画像の読み込み状態を管理
+
+  @override
+  void initState() {
+    super.initState();
+
+    if(widget.image1 != null || widget.image2 != null){
+      isLoadingImage1 = false;
+      isLoadingImage2 = false;
+    }
+    else{
+
+      // 1つ目の画像の読み込み状態を監視
+      _imageStream1 = Image.network(widget.imageUrlP!).image.resolve(ImageConfiguration.empty);
+      _imageStream1.addListener(ImageStreamListener((info, call) {
+        if (mounted) {
+          setState(() {
+            // 1つ目の画像が読み込まれたらisLoadingImage1をfalseに設定
+            isLoadingImage1 = false;
+          });
+        }
+      }));
+
+      // 2つ目の画像の読み込み状態を監視
+      _imageStream2 = Image.network(widget.imageUrlC!).image.resolve(ImageConfiguration.empty);
+      _imageStream2.addListener(ImageStreamListener((info, call) {
+        if (mounted) {
+          setState(() {
+            // 2つ目の画像が読み込まれたらisLoadingImage2をfalseに設定
+            isLoadingImage2 = false;
+          });
+        }
+      }));
+
+    }
+    
+
+
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -169,29 +257,32 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
           
 
           if (showProblemImage && (widget.image1 != null || widget.imageUrlP != null))
-            Container(
-              width: SizeConfig.blockSizeHorizontal! * 90,
-              height: SizeConfig.blockSizeVertical! * 90,
-              
-              padding: EdgeInsets.all(8.0),
-              margin: EdgeInsets.all(8.0),
-              //decoration: BoxDecoration(border: Border.all(), color: Colors.black),
-              child: SizedBox(
-                //width: SizeConfig.safeBlockHorizontal! * 80,
-                //height: SizeConfig.safeBlockVertical! * 30,
+            if (isLoadingImage1)
+              preloader
+            else
+              Container(
+                width: SizeConfig.blockSizeHorizontal! * 90,
+                height: SizeConfig.blockSizeVertical! * 90,
+                
+                padding: EdgeInsets.all(8.0),
+                margin: EdgeInsets.all(8.0),
+                //decoration: BoxDecoration(border: Border.all(), color: Colors.black),
+                child: SizedBox(
+                  //width: SizeConfig.safeBlockHorizontal! * 80,
+                  //height: SizeConfig.safeBlockVertical! * 30,
 
-                child: widget.image1 != null
-                    ? Image.memory(
-                        widget.image1!.bytes!,
-                        fit: BoxFit.contain,
-                      )
-                    : Image.network(
-                        widget.imageUrlP!,
-                        fit: BoxFit.contain,
-                      ),
+                  child: widget.image1 != null
+                      ? Image.memory(
+                          widget.image1!.bytes!,
+                          fit: BoxFit.contain,
+                        )
+                      : Image.network(
+                          widget.imageUrlP!,
+                          fit: BoxFit.contain,
+                        ),
+                ),
+
               ),
-
-            ),
 
           ElevatedButton(
             onPressed: () {
@@ -202,28 +293,33 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
             child: Text("解説を表示する"),
           ),
           
-          if (showExplanationImage && (widget.image2 != null || widget.imageUrlC != null))
-            Container(
-              width: SizeConfig.blockSizeHorizontal! * 90,
-              height: SizeConfig.blockSizeVertical! * 90,
 
-              padding: EdgeInsets.all(8.0),
-              margin: EdgeInsets.all(8.0),
-              //decoration: BoxDecoration(border: Border.all(), color: Colors.black),
-              child: SizedBox(
-                width: SizeConfig.safeBlockHorizontal! * 80,
-                height: SizeConfig.safeBlockVertical! * 80,
-                child: widget.image2 != null
-                    ? Image.memory(
-                        widget.image2!.bytes!,
-                        fit: BoxFit.contain,
-                      )
-                    : Image.network(
-                        widget.imageUrlC!,
-                        fit: BoxFit.contain,
-                      ),
+
+          if (showExplanationImage && (widget.image2 != null || widget.imageUrlC != null))
+            if (isLoadingImage2)
+              preloader
+            else
+              Container(
+                width: SizeConfig.blockSizeHorizontal! * 90,
+                height: SizeConfig.blockSizeVertical! * 90,
+
+                padding: EdgeInsets.all(8.0),
+                margin: EdgeInsets.all(8.0),
+                //decoration: BoxDecoration(border: Border.all(), color: Colors.black),
+                child: SizedBox(
+                  width: SizeConfig.safeBlockHorizontal! * 80,
+                  height: SizeConfig.safeBlockVertical! * 80,
+                  child: widget.image2 != null
+                      ? Image.memory(
+                          widget.image2!.bytes!,
+                          fit: BoxFit.contain,
+                        )
+                      : Image.network(
+                          widget.imageUrlC!,
+                          fit: BoxFit.contain,
+                        ),
+                ),
               ),
-            ),
         ],
       ),
     );
