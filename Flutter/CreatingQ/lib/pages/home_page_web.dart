@@ -9,6 +9,10 @@ import 'package:share_your_q/utils/various.dart';
 import 'package:share_your_q/image_operations/image_list_display.dart';
 import "package:share_your_q/pages/test_pages.dart";
 import "package:share_your_q/pages/profile_page.dart";
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+
+import "package:share_your_q/utils/various.dart";
+import "package:share_your_q/image_operations/test_override.dart";
 
 
 //homepage
@@ -44,7 +48,23 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // ここでSupabaseからデータを取得し、リストに格納する処理を呼び出す
     fetchData(currentPage);
+    //
+    final String External_id = supabase.auth.currentUser!.id.toString();
+    print(External_id);
+    //TODO ここはandroidビルドリリースの時のみ
+    //OneSignal.login(External_id);
   }
+
+  /*
+  void _handleLogin() {
+    print("Setting external user ID");
+    if ( == null) return;
+    OneSignal.login(_externalUserId!);
+    OneSignal.User.addAlias("fb_id", "1341524");
+  }
+   */
+
+
 
   Future<void> fetchData(int page) async {
     try {
@@ -189,10 +209,10 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         controller: _pageViewController,
         children:  <Widget>[
-          ImageListDisplay(),
-          TestPages(title: "B"),
-          TestPages(title: "C"),
-          TestPages(title: "D"),
+          ImageListDisplay(title: "新着", subject: "全て", level: "全て", method: "新着",tags: [],),
+          SearchPage(),
+          ProfilePage(),
+          const TestPages(title: "D"),
         ],
         onPageChanged: (index) {
           setState(() {
