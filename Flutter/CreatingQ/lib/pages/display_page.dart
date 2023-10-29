@@ -225,35 +225,39 @@ class _DisplayPageState extends State<DisplayPage>{
         title: const Text('画像一覧'),
       ),
 
-      body: Container(
-        alignment: Alignment.center,
-
-        child: ListView(
-          children: [
-            
-            ProblemViewWidget(
-              title: widget.title,
-
-              tag1: widget.tag1,
-              tag2: widget.tag2,
-              tag3: widget.tag3,
-              tag4: widget.tag4,
-              tag5: widget.tag5,
-
-              //tags: tags,
-              level: widget.level,
-              subject: widget.subject,
-              image1: null,
-              image2: null,
-              imageUrlP: widget.imageUrlP,
-              imageUrlC: widget.imageUrlC,
-
-              explanation: widget.explanation,
-
-            ),
-          ],
-        )
-
+      body: SingleChildScrollView(
+        
+        child: Container(
+          alignment: Alignment.center,
+          height: SizeConfig.blockSizeVertical! * 90,
+      
+          child: ListView(
+            children: [
+              
+              ProblemViewWidget(
+                title: widget.title,
+      
+                tag1: widget.tag1,
+                tag2: widget.tag2,
+                tag3: widget.tag3,
+                tag4: widget.tag4,
+                tag5: widget.tag5,
+      
+                //tags: tags,
+                level: widget.level,
+                subject: widget.subject,
+                image1: null,
+                image2: null,
+                imageUrlP: widget.imageUrlP,
+                imageUrlC: widget.imageUrlC,
+      
+                explanation: widget.explanation,
+      
+              ),
+            ],
+          )
+      
+        ),
       ),
 
       //ここでいいね評価を行う
@@ -280,6 +284,11 @@ class _DisplayPageState extends State<DisplayPage>{
           color: isLiked ? Colors.red : Colors.white,
         ),
       )
+
+
+
      );
+
+
   }
 }
