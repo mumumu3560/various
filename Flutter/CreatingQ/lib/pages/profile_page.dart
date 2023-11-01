@@ -24,92 +24,73 @@ class _ProfilePageState extends State<ProfilePage> {
   int maxPage = 1;
 
   @override
-  void initState() {
-    super.initState();
-    fetchData(currentPage);
-  }
-
-  Future<void> fetchData(int page) async {
-    try {
-      final response = await supabase
-          .from("image_data")
-          .select<List<Map<String, dynamic>>>()
-          .order('created_at');
-
-      setState(() {
-        maxPage = (response.length / itemsPerPage).ceil();
-        isLoading = false;
-        imageData = response;
-      });
-    } catch (e) {
-      print('Error fetching data: $e');
-    }
-  }
-
-  void loadNextPage() {
-    currentPage++;
-    fetchData(currentPage);
-  }
-
-  void loadPreviousPage() {
-    if (currentPage > 1) {
-      currentPage--;
-      fetchData(currentPage);
-    }
-  }
-
-  // リストをリロードするメソッド
-  void reloadList() {
-    setState(() {
-      isLoading = true;
-    });
-    fetchData(currentPage); // リロード時にデータを再取得
-  }
-
-  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Scaffold(
+    return DefaultTabController(
+      length: 3,
+      initialIndex: 0,
 
-      appBar: AppBar(
-        title: const Text("プロフィール"),
-      ),
+      child: Scaffold(
+    
+        appBar: AppBar(
+          title: const Text('プロフィール'),
 
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 25),
-
-          child: Container(
-            width: SizeConfig.blockSizeHorizontal! * 80,
-            height: SizeConfig.blockSizeVertical! * 80,
-
-            child: SingleChildScrollView(
-
-              child: Column(
-                children: [
-
-                  Container(
-                    width: SizeConfig.blockSizeHorizontal! * 80,
-                    height: SizeConfig.blockSizeVertical! * 80,
-                    child: RadarChartSample(),
-                  ),
-
-                  SizedBox(height: 50,),
-
-                  Container(
-                    width: SizeConfig.blockSizeHorizontal! * 80,
-                    height: SizeConfig.blockSizeVertical! * 80,
-                    child: RadarChartSample(),
-                  ),
-
-                ]
-              )
-              
+          bottom: (
+    
+            const TabBar(
+              tabs: <Widget>[
+                Tab(text: "作問傾向", icon: Icon(Icons.create)),
+                Tab(text: "解答傾向", icon: Icon(Icons.star)),
+                Tab(text: "貢献度", icon: Icon(Icons.workspace_premium)),
+              ]
             )
-          ),
         )
-      ),
+          
+          //title: const Text("プロフィール"),
+        ),
+    
+        body: TabBarView(
+          children: <Widget>[
+              
+            Center(
+              
+              child: SingleChildScrollView(
 
+                child: Column(
+                  children: [
+                    
+                    Container(
+                      width: SizeConfig.blockSizeHorizontal! * 90,
+                      height: SizeConfig.blockSizeVertical! * 90,
+                      child: RadarChartSample(),
+                    ),
+                    
+                    SizedBox(height: 50,),
+                    
+                    Container(
+                      width: SizeConfig.blockSizeHorizontal! * 80,
+                      height: SizeConfig.blockSizeVertical! * 80,
+                      child: RadarChartSample(),
+                    ),
+                    
+                  ]
+                ),
+              ),
+            ),
+              
+            Center(
+              child: Text("It's rainy here"),
+            ),
+              
+            Center(
+              child: Text("It's sunny here"),
+            ),
+              
+          ],
+              
+        ),
+    
+      ),
     );
 
 
