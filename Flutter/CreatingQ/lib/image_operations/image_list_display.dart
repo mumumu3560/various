@@ -6,6 +6,11 @@ import "package:share_your_q/pages/display_page.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+//google_admob
+//TODO ビルドリリースの時のみ
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import "package:share_your_q/admob/ad_helper.dart";
+import "package:share_your_q/admob/ad_mob.dart";
 
 
 class ImageListDisplay extends StatefulWidget {
@@ -15,6 +20,7 @@ class ImageListDisplay extends StatefulWidget {
   final String? method;
   final List<String>? tags;
   final String? title;
+  final String? searchUserId;
 
   const ImageListDisplay({
     Key? key,
@@ -23,6 +29,7 @@ class ImageListDisplay extends StatefulWidget {
     required this.method,
     required this.tags,
     required this.title,
+    required this.searchUserId,
   }) :super(key: key);
 
   @override
@@ -34,11 +41,22 @@ class ImageListDisplay extends StatefulWidget {
 class ImageListDisplayState extends State<ImageListDisplay> {
   List<Map<String, dynamic>> imageData = [];
   bool isLoading = true;
+  //TODO ビルドリリースの時のみ
+  final AdMob _adMob = AdMob();
 
   @override
   void initState() {
     super.initState();
     fetchData();
+    //TODO ビルドリリースの時のみ
+    _adMob.load();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    //TODO ビルドリリースの時のみ
+    _adMob.dispose();
   }
 
   Future<void> fetchData() async {
@@ -61,9 +79,10 @@ class ImageListDisplayState extends State<ImageListDisplay> {
       //Conditional Chaining
       //https://supabase.com/docs/reference/dart/using-filters
       var query = supabase.from("image_data").select<List<Map<String, dynamic>>>();
-      if(widget.level != "全て") query = query.eq("level", widget.level as String);
-      if(widget.subject != "全て") query = query.eq("subject", widget.subject as String);
+      if(widget.level != "全て" && widget.level != null) query = query.eq("level", widget.level as String);
+      if(widget.subject != "全て" && widget.subject != null) query = query.eq("subject", widget.subject as String);
       if(widget.method == "未発掘") query = query.eq("watched", 0);
+      if(widget.searchUserId != "" && widget.searchUserId != null) query = query.eq("user_id", widget.searchUserId as String);
 
       if(widget.method == "新着"){
         response = await query.order("created_at", ascending: false);
@@ -130,8 +149,22 @@ class ImageListDisplayState extends State<ImageListDisplay> {
                         child: ListView.builder(
                           itemCount: imageData.length,
                           itemBuilder: (context, index) {
-                            final item = imageData[index];
-                            return MyListItem(item: item);
+
+                            if(index%6 == 0){
+                              return Container(
+                                height: 64,
+                                width: double.infinity,
+                                color: Colors.white,
+                                //TODO ビルドリリースの時のみ
+                                child: _adMob.getAdBanner(),
+                              );
+                            }
+                            else{
+                              final item = imageData[index];
+                              return MyListItem(item: item);
+                            }
+                            
+                            
                           },
                         ),
                       ),
@@ -168,7 +201,11 @@ class MyListItem extends StatelessWidget {
     final String imageUrlP = '$deliveryURL/$imageUrlPX/public';
 
     final String imageUrlEx = "${deliveryURL}/728235a5-f792-4f3e-e4f8-b67ec469d500/public";
-    
+
+    final List<String> titleLines = item['title'].toString().split("\n");
+    final List<String> explainLines = item['explain'].toString().split("\n");
+
+
     return Card(
       child: ListTile(
         dense: true,
@@ -181,35 +218,66 @@ class MyListItem extends StatelessWidget {
           onTap: () {
             print("タップされました");
           }),
+
         title: Text(item['user_name']),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            Text(
-              "[${item['title']}]",
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              )
-            ),
+
+            item["title"] != null
+              ? titleLines.length > 3
+                ?Text(
+                  titleLines[0] + "\n" + titleLines[1] + "\n" + titleLines[2] + "\n" + "……",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  )
+                )
+                :Text(
+                  "[${item['title']}]",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ), 
+                )
+              : const Text("タイトルなし"),
+            
 
             item["explain"] != null 
-              ? Text(
-                item['explain'],
-                style: const TextStyle(
-                  fontSize: 16,
-                ),) 
+              ? explainLines.length > 3
+                ? Text(
+                  explainLines[0] + "\n" + explainLines[1] + "\n" + explainLines[2] + "\n" + "……",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+                )
+                : Text(
+                  item["explain"],
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+                )
+              
               : const Text("説明文なし"),
             
 
-            
-            Text(item['level']),
-            Text(item['subject']),
+            item["level"] != null
+              ? Text(
+                  item['level'],
+                )
+              : const Text("レベルなし"),
+
+            item["subject"] != null
+              ? Text(
+                  item['subject'],
+                )
+              : const Text("教科なし"),
+              
             Row(
               children: [
 
-                if (item['tag1'] != null) Text("#"+item['tag1'] ),
+                if (item['tag1'] != null) Text("#"+item['tag1']),
                 if (item['tag2'] != null) Text("#"+item['tag2']),
                 if (item['tag3'] != null) Text("#"+item['tag3']),
                 if (item['tag4'] != null) Text("#"+item['tag4']),
