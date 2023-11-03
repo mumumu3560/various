@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share_your_q/pages/profile_page.dart';
 import 'package:share_your_q/utils/various.dart';
 import 'package:share_your_q/image_operations/image_display.dart';
 
@@ -6,11 +7,13 @@ import "package:share_your_q/pages/display_page.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:timeago/timeago.dart';
+
+import 'package:http/http.dart' as http;
+
 //google_admob
 //TODO ビルドリリースの時のみ
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import "package:share_your_q/admob/ad_helper.dart";
-import "package:share_your_q/admob/ad_mob.dart";
+//import "package:share_your_q/admob/ad_mob.dart";
 
 
 class ImageListDisplay extends StatefulWidget {
@@ -42,21 +45,21 @@ class ImageListDisplayState extends State<ImageListDisplay> {
   List<Map<String, dynamic>> imageData = [];
   bool isLoading = true;
   //TODO ビルドリリースの時のみ
-  final AdMob _adMob = AdMob();
+  //final AdMob _adMob = AdMob();
 
   @override
   void initState() {
     super.initState();
     fetchData();
     //TODO ビルドリリースの時のみ
-    _adMob.load();
+    //_adMob.load();
   }
 
   @override
   void dispose() {
     super.dispose();
     //TODO ビルドリリースの時のみ
-    _adMob.dispose();
+    //_adMob.dispose();
   }
 
   Future<void> fetchData() async {
@@ -134,7 +137,7 @@ class ImageListDisplayState extends State<ImageListDisplay> {
         child: Container(
           //中央寄り
           alignment: Alignment.center,
-          width: SizeConfig.blockSizeHorizontal! * 90,
+          //width: SizeConfig.blockSizeHorizontal! * 90,
           //height: SizeConfig.blockSizeVertical! * 90,
           
           child: Column(
@@ -150,13 +153,22 @@ class ImageListDisplayState extends State<ImageListDisplay> {
                           itemCount: imageData.length,
                           itemBuilder: (context, index) {
 
+                            //6の倍数の時には広告を表示する。
                             if(index%6 == 0){
-                              return Container(
-                                height: 64,
-                                width: double.infinity,
-                                color: Colors.white,
-                                //TODO ビルドリリースの時のみ
-                                child: _adMob.getAdBanner(),
+                              final item = imageData[index];
+                              return Column(
+                                children: [
+                                  Container(
+                                    height: 64,
+                                    width: double.infinity,
+                                    color: Colors.white,
+                                    //TODO ビルドリリースの時のみ
+                                    //child: _adMob.getAdBanner(),
+                                  ),
+
+                                  
+                                  MyListItem(item: item),
+                                ],
                               );
                             }
                             else{
@@ -189,8 +201,28 @@ class MyListItem extends StatelessWidget {
     
   }): super(key: key);
 
+  Future<String> loadUserImage(String imageUrl) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+
+      if (response.statusCode == 200) {
+        // レスポンスステータスコードが 200 の場合、画像のデータを返す
+        return imageUrl;
+      } else {
+        // レスポンスステータスコードが 200 以外の場合、エラーメッセージを返す
+        print('Error loading image: Status Code ${response.statusCode}');
+        return '';
+      }
+    } catch (e) {
+      // ネットワークエラーが発生した場合、エラーメッセージを返す
+      print('Error loading image: $e');
+      return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
     final String imageUrlCX =
         '${item["user_id"]}XCommentXnum${item["num"].toString()}XPnum${item["P_I_count"].toString()}XCnum${item["C_I_count"].toString()}';
     final String imageUrlPX =
@@ -206,24 +238,77 @@ class MyListItem extends StatelessWidget {
     final List<String> explainLines = item['explain'].toString().split("\n");
 
 
+
     return Card(
       child: ListTile(
         dense: true,
 
-        leading: GestureDetector(
-          child: CircleAvatar(
-            radius: 20, // アイコン
-            backgroundImage: NetworkImage(imageUrlC), // ユーザーアイコンのURLを設定
-          ),
-          onTap: () {
-            print("タップされました");
-          }),
+        leading: FutureBuilder(
+          future: loadUserImage(imageUrlC),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // データの読み込み中はローディングインジケータなどを表示する
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError || snapshot.data == "" || snapshot.hasError) {
+              // エラーが発生した場合は代替のアイコンを表示する
+              return GestureDetector(
+                child: CircleAvatar(
+                  radius: 20,
+                  child: Icon(
+                    Icons.error_outline,
+                    color: Colors.blue,
+                    size: 40,
+                  ),
+                ),
+                onTap: () {
+                  print('Error occurred. Handle onTap action here.');
+                  context.showErrorSnackBar(message: "プロフィールに遷移出来ません");
+                  // タップした際の処理を記述する
+                },
+              );
+            } else {
+              // データが正常に読み込まれた場合に画像を表示する
+              return GestureDetector(
+                child: CircleAvatar(
+                  radius: 20,
+                  child: ClipOval(
+                    child: Image.network(
+                      snapshot.data.toString(),
+                      fit: BoxFit.cover,
+                      width: 40,
+                      height: 40,
+                      errorBuilder: (context, error, stackTrace) {
+                // エラーが発生した場合の代替イメージを表示する
+                return Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 40,
+                );
+              },
+                    ),
+                  ),
+                ),
+
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(userId: myUserId),
+                    ),
+                  );
+                },
+
+              );
+            }
+          },
+        ),
 
         title: Text(item['user_name']),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
+            //Supabaseのtimestamptz型をDateTime型に変換して表示
+            Text(format(DateTime.parse(item["created_at"]), locale: 'ja')),
 
             item["title"] != null
               ? titleLines.length > 3
@@ -300,7 +385,13 @@ class MyListItem extends StatelessWidget {
 
           ],
         ),
-        onTap: () {
+        onTap: () async{
+
+          final response = await loadUserImage(imageUrlC);
+          if(response == ""){
+            context.showErrorSnackBar(message: "この問題は読み込めません");
+            return;
+          }
 
           print(item["tag1"]);
           print(item["tag2"]);

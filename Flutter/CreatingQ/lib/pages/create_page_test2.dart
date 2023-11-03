@@ -8,6 +8,7 @@ import 'package:share_your_q/image_operations/image_select.dart';
 import 'package:share_your_q/image_operations/image_upload.dart';
 import 'package:share_your_q/utils/various.dart';
 
+import "package:share_your_q/image_operations/problem_view.dart";
 
 //問題を作るページ
 
@@ -85,12 +86,29 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   // 選択した画像をアップロードする関数
-  void uploadSelectedImage(PlatformFile? selectedImage, String customId, String? directUploadUrl) {
+  Future<int> uploadSelectedImage(PlatformFile? selectedImage, String customId, String? directUploadUrl) async{
     if (selectedImage != null && directUploadUrl != null) {
       print("ここはどうですか？");
       final uploadUrl = directUploadUrl;
-      uploadImage(uploadUrl, selectedImage);
+      int responseNum;
+      try{
+        responseNum = await uploadImage(uploadUrl, selectedImage).timeout(Duration(seconds: 5));
+      }catch(e){
+        responseNum = 1;
+      }
+
+      if(responseNum != 0){
+        return 1;
+      }
+      else{
+        return 0;
+      }
+
     }
+    else{
+      return 1;
+    }
+
   }
 
   //ここにproblemNumを決める関数を書く。
@@ -108,7 +126,7 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   // Supabaseに情報を送信する関数（未実装）
-  Future<void> sendInfoToSupabase() async {
+  Future<int> sendInfoToSupabase() async {
     // TODO: Supabaseに情報を送信するロジックを実装
 
     
@@ -132,6 +150,7 @@ class _CreatePageState extends State<CreatePage> {
         "C_I_count": 1,
         "user_name" : userName,
         "explain": explainText,
+        //"likes": 100,
       });
 
       //ここでは、ユーザーの問題の投稿数を増やす。
@@ -140,10 +159,19 @@ class _CreatePageState extends State<CreatePage> {
       }).eq("id", userId);
 
 
+      return 0;
+
+
     } on PostgrestException catch (error){
-      context.showErrorSnackBar(message: error.message);
+      if(context.mounted){
+        context.showErrorSnackBar(message: error.message);
+      }
+      return 1;
     } catch(_){
+      if(context.mounted){
       context.showErrorSnackBar(message: unexpectedErrorMessage);
+      }
+      return 2;
     }
 
 
@@ -151,7 +179,7 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   // クラウドフレアのImageサービスからアップロード用のURLを取得する関数
-  Future<void> getImageUploadUrls() async {
+  Future<int> getImageUploadUrls() async {
 
     //TODO今は1つの問題につき2つの画像をアップロードするようにしているが、
     //これからは問題、解答複数枚に対応するようにする。
@@ -164,13 +192,40 @@ class _CreatePageState extends State<CreatePage> {
     //09004426-6a8d-4633-9cda-fae9bd2ee46c?Comment?num=10?Pnum=1?Cnum=1
 
     print("ここは？");
+
+    //ここではknownUserInfoとonServerResponseReceived(関数)が必要なのでそれを渡す。
     final response1 = await ImageSelectionAndRequest(
       knownUserInfo: '${userId}XproblemXnum${problemNum.toString()}XPnum${problemIcount.toString()}XCnum${commentIcount.toString()}',
       //knownUserInfo: userId+"?"+"problem"+"?"+problemNum.toString()+"?"+problemIcount.toString(),
       onServerResponseReceived: (customId, directUploadUrl) {
         onServerResponseReceived(customId, directUploadUrl, true);
       },
+
+      
     ).sendRequest();
+
+    print(response1);
+
+    if(response1 == 0){
+      //context.showErrorSnackBar(message: "サーバーエラーが発生しました。");
+    }
+    else if(response1 == 1){
+
+      if(context.mounted){
+        context.showErrorSnackBar(message: "サーバーエラー1");
+      }
+      
+      return 1;
+    }
+    else{
+      if(context.mounted){
+        context.showErrorSnackBar(message: "ネットワークエラー1。");
+      }
+      
+      return 2;
+    }
+
+    
 
     print("レスポンス確認");
 
@@ -178,25 +233,49 @@ class _CreatePageState extends State<CreatePage> {
 
     // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
     print("ここが問題1");
-    uploadSelectedImage(selectedImage1, customId1!, directUploadUrl1);
+
+    final checkUpload1 = uploadSelectedImage(selectedImage1, customId1!, directUploadUrl1);
+    
+    if(checkUpload1 as int != 0){
+      return 1;
+    }
+
     print("ここが問題2");
     // 2つ目の画像用のリクエスト
-
-    //09004426-6a8d-4633-9cda-fae9bd2ee46cXCommentXnum=6XPnum=1XCnum=1
-    //URLエンコードでは?が%3Fになるので違う文字を使う
     final response2 = await ImageSelectionAndRequest(
       knownUserInfo: '${userId}XCommentXnum${problemNum.toString()}XPnum${problemIcount.toString()}XCnum${commentIcount.toString()}',
-      //knownUserInfo: '${userId}XcommentX${problemNum.toString()}X${commentIcount.toString()}X',
-      //knownUserInfo: userId+"?"+"Comment"+"?"+problemNum.toString()+commentIcount.toString(),
+      
       onServerResponseReceived: (customId, directUploadUrl) {
         onServerResponseReceived(customId, directUploadUrl, false);
       },
+
     ).sendRequest();
 
-    // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
-    uploadSelectedImage(selectedImage2, customId2!, directUploadUrl2);
+    if(response2 == 0){
+      //context.showErrorSnackBar(message: "サーバーエラーが発生しました。");
+    }
+    else if(response1 == 1){
+      if(context.mounted){
+        context.showErrorSnackBar(message: "サーバーエラー2。");
+      }
+      return 3;
+    }
+    else{
+      if(context.mounted){
+        context.showErrorSnackBar(message: "ネットワークエラー2");
+      }
+      return 4;
+    }
 
+    // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
+    final checkUpload2 = uploadSelectedImage(selectedImage2, customId2!, directUploadUrl2);
+
+    if(checkUpload2 as int != 0){
+      return 1;
+    }
     print("できたかどうかの確認");
+
+    return 0;
 
   }
 
@@ -488,6 +567,7 @@ class _CreatePageState extends State<CreatePage> {
                             ),
                           );
                         } else {
+                          print("ここは？");
                           //print(selectedImage1!.bytes!);
                           //fetchProblemNum();
                           setState(() {
@@ -496,7 +576,7 @@ class _CreatePageState extends State<CreatePage> {
                           });
                         }
                       },
-                      child: Text("問題を投稿"),
+                      child: Text("問題のプレビュー"),
                     ),
                     SizedBox(height: 20),
                   ],
@@ -513,8 +593,15 @@ class _CreatePageState extends State<CreatePage> {
 
   // 問題投稿の確認画面を表示する関数
   Widget buildConfirmationView() {
+    print("aaaaaa");
+    print(level);
+    print(subject);
+    print(selectedImage1!=null);
+    print(selectedImage2!=null);
+    print(explainText);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+
       children: <Widget>[
         /*       
         */
@@ -536,6 +623,9 @@ class _CreatePageState extends State<CreatePage> {
           imageUrlC: null,
 
           explanation: explainText!,
+
+          isCreate: true,
+          image_id: null,
         ),
 
         /*
@@ -560,16 +650,88 @@ class _CreatePageState extends State<CreatePage> {
           onPressed: () async {
 
             showLoadingDialog(context,"処理中...");
-            
-            await sendInfoToSupabase();
 
             // 画像をアップロード
-            await getImageUploadUrls();
+            //Cloudflare
+            int checkUpload = await getImageUploadUrls();
 
-            // ダイアログを閉じる
-            Navigator.of(context).pop();
+            
 
-            showFinisheDialog(context, "Great!", "投稿が完了しました！！");
+            if(checkUpload != 0){
+              if(context.mounted){
+                //context.showErrorSnackBar(message: "サーバーエラーにより、画像のアップロードができませんでした。");
+                Navigator.of(context).pop();
+              }
+              
+              AlertDialog(
+                title: Text("エラー"),
+                content: Text("サーバーエラーにより、画像のアップロードができませんでした。"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // ダイアログを閉じる
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+
+              return;
+            }
+
+            int checkSupabase = await sendInfoToSupabase();
+
+            if(checkSupabase != 0){
+              if(context.mounted){
+                //context.showErrorSnackBar(message: "サーバーエラーにより、問題の投稿ができませんでした。");
+                Navigator.of(context).pop();
+              }
+
+              AlertDialog(
+                title: Text("エラー"),
+                content: Text("サーバーエラーにより、問題の投稿ができませんでした。"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // ダイアログを閉じる
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+              
+              return;
+            }
+
+            print("Supabaseはおｋ");
+
+
+            
+
+
+            
+
+
+
+            
+
+            if(context.mounted){
+              // ダイアログを閉じる
+              Navigator.of(context).pop();
+            }
+
+            AlertDialog(
+                title: Text("Great!"),
+                content: Text("問題の投稿が完了しました！"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // ダイアログを閉じる
+                    },
+                    child: Text('閉じる'),
+                  ),
+                ],
+              );
 
             setState(() {
               isConfirmationMode = false;
@@ -586,6 +748,7 @@ class _CreatePageState extends State<CreatePage> {
           },
           child: const Text("編集"),
         ),
+
       ],
     );
   }

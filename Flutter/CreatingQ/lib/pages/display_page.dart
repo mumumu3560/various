@@ -3,6 +3,11 @@ import 'package:share_your_q/image_operations/image_display.dart'; // ImageDispl
 import 'package:share_your_q/utils/various.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import "package:share_your_q/image_operations/problem_view.dart";
+
+//google_admob
+//TODO ビルドリリースの時のみ
+//import "package:share_your_q/admob/ad_mob.dart";
 
 //リストをタップした際に遷移するページ問題が見れる
 //UIはわからない
@@ -32,6 +37,7 @@ class DisplayPage extends StatefulWidget {
   final String? explanation;
 
   final int? num;
+
 
   const DisplayPage({
     Key? key,
@@ -68,6 +74,8 @@ class _DisplayPageState extends State<DisplayPage>{
   final userId = supabase.auth.currentUser!.id;
   bool isLiked = false;
   bool isLoading = true; // ローディング中かどうかを示すフラグ
+  //TODO ビルドリリースの時のみ
+  //final AdMob _adMob = AdMob();
 
   @override
   void initState(){
@@ -75,6 +83,16 @@ class _DisplayPageState extends State<DisplayPage>{
     super.initState();
     //_insertOrUpdateDataToSupabaseTable();
     _initializeData();
+
+    //TODO ビルドリリースの時のみ
+    //_adMob.load();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    //TODO ビルドリリースの時のみ
+    //_adMob.dispose();
   }
 
   Future<void> _initializeData() async {
@@ -227,55 +245,111 @@ class _DisplayPageState extends State<DisplayPage>{
 
       body: SingleChildScrollView(
         
-        child: Container(
-          alignment: Alignment.center,
-          height: SizeConfig.blockSizeVertical! * 90,
-      
-          child: ListView(
-            children: [
+        child: Column(
+          children: [
+            Container(
               
-              ProblemViewWidget(
-                title: widget.title,
-      
-                tag1: widget.tag1,
-                tag2: widget.tag2,
-                tag3: widget.tag3,
-                tag4: widget.tag4,
-                tag5: widget.tag5,
-      
-                //tags: tags,
-                level: widget.level,
-                subject: widget.subject,
-                image1: null,
-                image2: null,
-                imageUrlP: widget.imageUrlP,
-                imageUrlC: widget.imageUrlC,
-      
-                explanation: widget.explanation,
-      
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.blue),
+                borderRadius: BorderRadius.circular(10),
               ),
-            ],
-          )
+
+              alignment: Alignment.center,
+              height: SizeConfig.blockSizeVertical! * 75,
       
+              child: ListView(
+                children: [
+                  ProblemViewWidget(
+                    title: widget.title,
+      
+                    tag1: widget.tag1,
+                    tag2: widget.tag2,
+                    tag3: widget.tag3,
+                    tag4: widget.tag4,
+                    tag5: widget.tag5,
+      
+                    //tags: tags,
+                    level: widget.level,
+                    subject: widget.subject,
+                    image1: null,
+                    image2: null,
+                    imageUrlP: widget.imageUrlP,
+                    imageUrlC: widget.imageUrlC,
+      
+                    explanation: widget.explanation,
+
+                    isCreate: false,
+                    image_id: widget.image_id,
+      
+                  ),
+
+                  /*
+                  
+                  SizedBox(height: SizeConfig.blockSizeVertical! * 10,),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.red),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+
+                    height: SizeConfig.blockSizeVertical! * 60,
+
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            reverse: true,
+                            itemCount: 10,
+
+                            itemBuilder: (BuildContext context, int index){
+                              return ListTile(
+                                title: Text("コメント"),
+                              );
+                            },
+
+                            
+                          )
+                        ),
+                      ],
+                    ),
+                    
+                  ),
+                   */
+
+                ],
+              )
+      
+            ),
+
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2,),
+
+            Container(
+              height: SizeConfig.blockSizeVertical! * 10,
+              width: double.infinity,
+              color: Colors.white,
+              //TODO ビルドリリースの時のみ
+              //child: _adMob.getAdBanner(),
+            ),
+
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2,),
+
+          ],
         ),
+
+        
+
+
       ),
 
       //ここでいいね評価を行う
       floatingActionButton: FloatingActionButton(
         onPressed: () async { 
-          final String External_id = supabase.auth.currentUser!.id.toString();
-          print(External_id);
-          //OneSignal.login(External_id);
-          //context.showSuccessSnackBar(message: supabase.auth.currentUser!.id.toString());
-
           await _insertTestSupabase();
 
           setState(() {            
             isLiked = !isLiked;
           });
-
-          print(isLiked);
-          print("isliked?");
           
         },
         //もしisLikedがtrueならばアイコンは黄色、falseならば白

@@ -1,9 +1,14 @@
 import 'package:http/http.dart' as http;
 import "dart:convert";
+import 'package:flutter/material.dart';
+import "package:share_your_q/utils/various.dart";
+
+import 'package:share_your_q/utils/various.dart';
 
 class ImageSelectionAndRequest {
   final String knownUserInfo;
   final Function(String, String) onServerResponseReceived;
+  
 
   ImageSelectionAndRequest({
     required this.knownUserInfo,
@@ -11,13 +16,12 @@ class ImageSelectionAndRequest {
   });
 
 
-  Future<void> sendRequest() async {
-    final serverUrl = "workers_URL";
+  Future<int> sendRequest() async {
+    final serverUrl = "<URL>";
 
     try {
       
       //bodyにはuserIdとtypeを送る
-      //typeによってworkersにおける処理を変える
       //typeにはcreate、update等を送る。
       //createは自分の問題の投稿の際に使用
       //updateは自分の問題の編集の際に使用
@@ -51,11 +55,17 @@ class ImageSelectionAndRequest {
           onServerResponseReceived(customId, directUploadUrl);
         }
 
+        return 0;
+
       } else {
         print("サーバーエラー: ${response.statusCode}");
+        return 1;
+        
       }
     } catch (e) {
       print("ネットワークエラー: $e");
+      return 2;
+      
     }
 
   }
