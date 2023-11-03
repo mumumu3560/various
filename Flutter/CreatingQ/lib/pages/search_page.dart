@@ -7,6 +7,9 @@ import "package:share_your_q/pages/display_page.dart";
 import "package:share_your_q/image_operations/test_override.dart";
 import "package:share_your_q/image_operations/image_list_display.dart";
 
+//TODO ビルドリリースの時のみ
+//import "package:share_your_q/admob/ad_mob.dart";
+
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -30,6 +33,9 @@ class _SearchPageState extends State<SearchPage> {
 
   // タグの入力値
   String tagInput = '';
+
+  //TODO ビルドリリースの時のみ
+  //final AdMob _adMob = AdMob();
 
   // タグを追加する関数
   void addTag() {
@@ -79,8 +85,18 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  void search(){
+  @override
+  void initState() {
+    super.initState();
+    //TODO ビルドリリースの時のみ
+    //_adMob.load();
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
+    //TODO ビルドリリースの時のみ
+    //_adMob.dispose();
   }
 
 
@@ -90,138 +106,146 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: const Text('検索'),
       ),
-      body: SingleChildScrollView(
-
-
-        child: Center(
-
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
+      body: Column(
+        children: [
+          Expanded(
+            child: Column(
             
-            children: <Widget>[
-                Column(
-
-                  children: [
-                    
-                    // レベルとジャンルの横並び
-                    DropdownButton<String>(
-                      value: level,
-                      onChanged: (value) {
-                        setState(() {
-                          level = value;
-                        });
-                      },
-                      items: <String>["全て", '小学校', '中学校', '高校', '大学', 'その他']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      hint: const Text('レベル選択'),
-                    ),
-
-                    
-                    DropdownButton<String>(
-                      value: subject,
-                      onChanged: (value) {
-                        setState(() {
-                          subject = value;
-                        });
-                      },
-                      items: <String>["全て", '数学', '物理', '化学', 'その他']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      hint: const Text('ジャンル選択'),
-                    ),
-
-
-                    // 検索方法の選択
-                    DropdownButton<String>(
-                      value: method,
-                      onChanged: (value) {
-                        setState(() {
-                          method = value;
-                        });
-                      },
-                      items: <String>['新着', '未発掘', 'いいね順', "ランダム"]
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      hint: const Text('並び替え方法の選択'),
-                    ),
-
-                    
-
-
-                    /*
-                    // タグの入力フォーム
-                    TextFormField(
-                      maxLength: 10,
-                      controller: _tagController,
-                      onChanged: (value) {
-                        
-                        setState(() {
-                          tagInput = value;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        labelText: '検索したいタグを入力',
-                      ),
-                    ),
-                     */
-
-
-                    /*
-                    ElevatedButton(
-                      onPressed: addTag,
-                      child: Text("タグを追加"),
-                    ),
-
-                    Wrap(
-                      children: tags
-                      .map(
-                        (tag) => Chip(
-                          label: Text(tag),
-                          onDeleted: () {
-                            removeTag(tag);
-                          },
-                        ),
-                      )
-                    .toList(),
-                    ),
-                     */
-
-
-                    ElevatedButton(
-                      onPressed:(){
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ImageListDisplay(title: method, subject: subject, level: level, method: method,tags: [],), // ImageDisplayに遷移
-                          ),
-                        );
-                      },
-                      child: Text("検索"),
-                    ),
-
-
-                  ],
+              children: [
+                
+                // レベルとジャンルの横並び
+                DropdownButton<String>(
+                  value: level,
+                  onChanged: (value) {
+                    setState(() {
+                      level = value;
+                    });
+                  },
+                  items: <String>["全て", '小学校', '中学校', '高校', '大学', 'その他']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  hint: const Text('レベル選択'),
                 ),
+            
+                
+                DropdownButton<String>(
+                  value: subject,
+                  onChanged: (value) {
+                    setState(() {
+                      subject = value;
+                    });
+                  },
+                  items: <String>["全て", '数学', '物理', '化学', 'その他']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  hint: const Text('ジャンル選択'),
+                ),
+            
+            
+                // 検索方法の選択
+                DropdownButton<String>(
+                  value: method,
+                  onChanged: (value) {
+                    setState(() {
+                      method = value;
+                    });
+                  },
+                  items: <String>['新着', '未発掘', "ランダム"]
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  hint: const Text('並び替え方法の選択'),
+                ),
+            
+                
+            
+            
+                /*
+                // タグの入力フォーム
+                TextFormField(
+                  maxLength: 10,
+                  controller: _tagController,
+                  onChanged: (value) {
+                    
+                    setState(() {
+                      tagInput = value;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: '検索したいタグを入力',
+                  ),
+                ),
+                 */
+            
+            
+                /*
+                ElevatedButton(
+                  onPressed: addTag,
+                  child: Text("タグを追加"),
+                ),
+            
+                Wrap(
+                  children: tags
+                  .map(
+                    (tag) => Chip(
+                      label: Text(tag),
+                      onDeleted: () {
+                        removeTag(tag);
+                      },
+                    ),
+                  )
+                .toList(),
+                ),
+                 */
+            
+            
+                ElevatedButton(
+                  onPressed:(){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ImageListDisplay(title: method, subject: subject, level: level, method: method,tags: [], searchUserId: "",), // ImageDisplayに遷移
+                      ),
+                    );
+                  },
+                  child: Text("検索"),
+                ),
+            
+          
+              ],
+          
+              
+            ),
 
-            ],
 
           ),
 
-          
-        ),
+
+
+
+
+          Container(
+            height: SizeConfig.blockSizeVertical! * 30,
+            //height: 100 ,
+            width: double.infinity,
+            color: Colors.white,
+            //TODO ビルドリリースの時のみ
+            //child: _adMob.getAdBanner(),
+          ),
+
+          SizedBox(height: SizeConfig.blockSizeVertical! * 2,),
+
+        ],
 
         
       ),

@@ -1,8 +1,5 @@
-
 //import 'dart:math';
-
 import 'package:flutter/material.dart';
-
 import 'package:share_your_q/pages/create_page_test2.dart';
 import 'package:share_your_q/pages/search_page.dart';
 import 'package:share_your_q/utils/various.dart';
@@ -13,6 +10,7 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import "package:share_your_q/utils/various.dart";
 import "package:share_your_q/image_operations/test_override.dart";
+
 
 
 //homepage
@@ -41,6 +39,8 @@ class _HomePageState extends State<HomePage> {
   int itemsPerPage = 10;
   // データ取得中フラグ
   bool isLoading = true;
+
+  bool firstFetch = true;
 
 
   @override
@@ -97,12 +97,23 @@ class _HomePageState extends State<HomePage> {
             //.map((maps) => maps.map((map) => ImageData.fromMap(map: map))
             //.toList());
 
-      setState(() {
-        // データ取得完了後、isLoadingフラグをfalseに設定
-        isLoading = false;
-        // imageDataにデータをセット
-        imageData = response;
-      });
+      isLoading = false;
+      imageData = response;
+      
+
+      
+      if(!firstFetch){
+        //ここでヴィジェットが再構築される
+        setState(() {
+          // データ取得完了後、isLoadingフラグをfalseに設定
+          isLoading = false;
+          // imageDataにデータをセット
+          imageData = response;
+        });
+      }
+      else{
+        firstFetch = false;
+      }
       //id(int8),created_at(timestamp),num(int4)これは問題の番号、PorC(int2)これはそれがproblemかcommentか、
       //title(text)、user_id(uuid)これはユーザーid,level(text)→小中高大学、subject(text)→教科、
       //P_I_count(int4)これは問題の画像の数、C_I_count(int4)これはコメントの画像の数、
@@ -116,6 +127,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       // エラーハンドリングを実装
       print('Error fetching data: $e');
+      context.showErrorSnackBar(message: "データの取得に失敗しました。");
     }
   }
 
@@ -145,6 +157,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
 
     return Scaffold(
 
@@ -154,8 +167,15 @@ class _HomePageState extends State<HomePage> {
 
       drawer: Drawer(
 
+
         child: ListView(
           children: [
+            SizedBox(
+              height: SizeConfig.blockSizeVertical! * 15,
+              child: DrawerHeader(
+                child: Text("Share"),
+              ),
+            ),
 
             ListTile(
               title: const Text('問題を作る'),
@@ -188,16 +208,20 @@ class _HomePageState extends State<HomePage> {
                 // プロフィールページに遷移するコードを追加
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(), // ImageDisplayに遷移
+                    builder: (context) => ProfilePage(userId:myUserId), // ImageDisplayに遷移
                   ),
                 );
               },
             ),
 
             ListTile(
-              title: const Text('自分が投稿したものをみる'),
+              title: const Text('投稿した問題'),
               onTap: () {
-                // 投稿した画像を表示するページに遷移するコードを追加
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ImageListDisplay(subject: "全て", level: "全て", method: "新着", tags: [], title: "自分の投稿一覧", searchUserId: supabase.auth.currentUser!.id.toString()), // ImageDisplayに遷移
+                  ),
+                );
               },
             ),
 
@@ -209,9 +233,9 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         controller: _pageViewController,
         children:  <Widget>[
-          ImageListDisplay(title: "新着", subject: "全て", level: "全て", method: "新着",tags: [],),
+          ImageListDisplay(title: "新着", subject: "全て", level: "全て", method: "新着",tags: [], searchUserId: "",),
           SearchPage(),
-          ProfilePage(),
+          ProfilePage(userId: myUserId,),
           const TestPages(title: "D"),
         ],
         onPageChanged: (index) {
