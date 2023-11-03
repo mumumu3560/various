@@ -66,26 +66,10 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
 
   bool isLoadingImage1 = true; // 1つ目の画像の読み込み状態を管理
   bool isLoadingImage2 = true; // 2つ目の画像の読み込み状態を管理
-
-  late List<Map<String, dynamic>> commentList = [];
-
-  late final TextEditingController _textController = TextEditingController();
-
-  Future<void> fetchData() async{
-
-    commentList = await supabase
-          .from('comments')
-          .select<List<Map<String, dynamic>>>()
-          .eq('image_id', widget.image_id)
-          .order("created_at");
-
-    print(commentList);
-  }
+  
 
   @override
   void initState() {
-
-    if(!widget.isCreate) fetchData();
 
     super.initState();
 
@@ -121,40 +105,6 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
     
 
 
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  /// メッセージを送信する
-  void _submitMessage() async {
-    final comment = _textController.text;
-    if (comment.isEmpty) {
-      context.showErrorSnackBar(message: "コメントが入力されていません。");
-      return;
-    }
-    _textController.clear();
-    try {
-      await supabase.from('comments').insert({
-        "user_id": myUserId,
-        'comments': comment,
-        "image_id": widget.image_id,
-      });
-
-
-    } on PostgrestException catch (error) {
-      // エラーが発生した場合はエラーメッセージを表示
-      context.showErrorSnackBar(message: error.message);
-    } catch (_) {
-      // 予期せぬエラーが起きた際は予期せぬエラー用のメッセージを表示
-      context.showErrorSnackBar(message: unexpectedErrorMessage);
-    }
-
-    context.showSuccessSnackBar(message: "コメントを送信しました。コメントを見たい場合にはリロードしてください");
-    
   }
 
   
@@ -273,6 +223,7 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
 
               ),
 
+          SizedBox(height: SizeConfig.blockSizeVertical! * 10,),
           ElevatedButton(
             onPressed: () {
               setState(() {
@@ -316,116 +267,6 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
 
 
           SizedBox(height: SizeConfig.blockSizeVertical! * 10,),
-
-          //コメント一覧を表示する
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.green),
-              borderRadius: BorderRadius.circular(10),
-            ),
-
-            height: SizeConfig.blockSizeVertical! * 60,
-            width: SizeConfig.blockSizeHorizontal! * 95,
-
-            child: Column(
-              children: [
-
-                Container(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: const Opacity(
-                            opacity: 0.5,
-                            child: Text(
-                                      "コメント一覧",
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,fontStyle: FontStyle.italic)
-                                    ),
-                          ),
-                        ),
-                      ),
-
-                      IconButton(
-                        onPressed: (){
-                          setState(() {
-                            if(widget.isCreate){
-                              context.showErrorSnackBar(message: "リロードは問題を作成してから");
-                            }
-                            else{
-                              setState(() {
-                                fetchData();
-                              });
-                            }
-                          });
-                        },
-                        icon: const Icon(Icons.refresh),
-                      )
-                    ],
-                  ),
-                ),
-                
-                Expanded(
-                  child: ListView.builder(
-                    reverse: true,
-                    itemCount: commentList.length,
-                    itemBuilder: (BuildContext context, int index){
-                      return ChatBubble(commentData: commentList[index]);
-                    },
-
-                  )
-                ),
-
-                Material(
-                  color: Colors.black12,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 3, // 複数行入力可能にする
-                            controller: _textController,
-                            decoration: const InputDecoration(
-                              hintText: 'メッセージを入力',
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.all(8),
-                            ),
-
-                          ),
-                        ),
-
-                        TextButton(
-                          //onPressed: () => _submitMessage(),
-                          onPressed: () {
-                            if(widget.isCreate){
-                              context.showErrorSnackBar(message: "問題を作成してからコメントを送信してください。");
-                            }
-                            else{
-                              _submitMessage();
-                            }
-                          },
-                          child: const Text('送信'),
-                        ),
-                      ],
-                    ),
-                  )
-                ),
-
-
-
-
-              ],
-            ),
-
-
-          ),
-
-          SizedBox(height: SizeConfig.blockSizeHorizontal,),
-
-
-
 
         ],
       ),
