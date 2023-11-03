@@ -24,7 +24,9 @@ class ProblemViewWidget extends StatefulWidget {
 
   final String? explanation;
 
-  final bool? isCreate;
+  final bool isCreate;
+
+  final int? image_id;
 
   const ProblemViewWidget({
     Key? key,
@@ -47,6 +49,7 @@ class ProblemViewWidget extends StatefulWidget {
     required this.explanation,
 
     required this.isCreate,
+    required this.image_id,
   }) : super(key: key);
 
   @override
@@ -54,6 +57,7 @@ class ProblemViewWidget extends StatefulWidget {
 }
 
 class _ProblemViewWidgetState extends State<ProblemViewWidget> {
+
   late ImageStream _imageStream1;
   late ImageStream _imageStream2;
 
@@ -63,8 +67,26 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
   bool isLoadingImage1 = true; // 1つ目の画像の読み込み状態を管理
   bool isLoadingImage2 = true; // 2つ目の画像の読み込み状態を管理
 
+  late List<Map<String, dynamic>> commentList = [];
+
+  late final TextEditingController _textController = TextEditingController();
+
+  Future<void> fetchData() async{
+
+    commentList = await supabase
+          .from('comments')
+          .select<List<Map<String, dynamic>>>()
+          .eq('image_id', widget.image_id)
+          .order("created_at");
+
+    print(commentList);
+  }
+
   @override
   void initState() {
+
+    if(!widget.isCreate) fetchData();
+
     super.initState();
 
     if(widget.image1 != null || widget.image2 != null){
@@ -101,10 +123,45 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
 
   }
 
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  /// メッセージを送信する
+  void _submitMessage() async {
+    final comment = _textController.text;
+    if (comment.isEmpty) {
+      context.showErrorSnackBar(message: "コメントが入力されていません。");
+      return;
+    }
+    _textController.clear();
+    try {
+      await supabase.from('comments').insert({
+        "user_id": myUserId,
+        'comments': comment,
+        "image_id": widget.image_id,
+      });
+
+
+    } on PostgrestException catch (error) {
+      // エラーが発生した場合はエラーメッセージを表示
+      context.showErrorSnackBar(message: error.message);
+    } catch (_) {
+      // 予期せぬエラーが起きた際は予期せぬエラー用のメッセージを表示
+      context.showErrorSnackBar(message: unexpectedErrorMessage);
+    }
+
+    context.showSuccessSnackBar(message: "コメントを送信しました。コメントを見たい場合にはリロードしてください");
+    
+  }
+
   
 
   @override
   Widget build(BuildContext context) {
+    
     
     SizeConfig().init(context);
 
@@ -123,8 +180,8 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
             alignment: Alignment.centerLeft,
             //decoration: BoxDecoration(border: Border.all(), ),
             child: Text(
-              "タイトル: ${widget.title}",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              "${widget.title}",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
             ),
           ),
 
@@ -140,6 +197,7 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
                 Text("レベル: ${widget.level}"),
                 // tagは最大5つまでそれぞれをカンマで区切って表示する
 
+                SizedBox(height: 5,),
                 //タグを横並びにする
                 
                 Row(
@@ -153,12 +211,21 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
                   ],
                 ),
 
+                SizedBox(height: 5,),
+
                 Text("ジャンル: ${widget.subject}"),
 
-                Text("説明:\n${widget.explanation}" ),
+                SizedBox(height: 5,),
+
+                Text(
+                "説明:\n${widget.explanation}",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                ),
               ],
             ),
           ),
+
+          SizedBox(height: 10,),
 
           ElevatedButton(
             onPressed: () {
@@ -193,10 +260,15 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
                           widget.image1!.bytes!,
                           fit: BoxFit.contain,
                         )
-                      : Image.network(
-                          widget.imageUrlP!,
-                          fit: BoxFit.contain,
-                        ),
+                        //ここでもし画像が存在しない場合の処理を考える
+                        
+                      : widget.imageUrlP != null
+                          ? Image.network(
+                              widget.imageUrlP!,
+                              fit: BoxFit.contain,
+                            )
+                          //TODO No imageの画像を表示する  
+                          : null,
                 ),
 
               ),
@@ -224,23 +296,28 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
                 margin: EdgeInsets.all(8.0),
                 //decoration: BoxDecoration(border: Border.all(), color: Colors.black),
                 child: SizedBox(
-                  width: SizeConfig.safeBlockHorizontal! * 80,
-                  height: SizeConfig.safeBlockVertical! * 80,
+                  //width: SizeConfig.safeBlockHorizontal! * 80,
+                  //height: SizeConfig.safeBlockVertical! * 80,
                   child: widget.image2 != null
                       ? Image.memory(
                           widget.image2!.bytes!,
                           fit: BoxFit.contain,
                         )
-                      : Image.network(
-                          widget.imageUrlC!,
-                          fit: BoxFit.contain,
-                        ),
+                        //ここでもし画像が存在しない場合を考える。
+                      : widget.imageUrlC != null
+                          ? Image.network(
+                              widget.imageUrlC!,
+                              fit: BoxFit.contain,
+                            )
+                            //TODO No imageの画像を表示する
+                          : null,
                 ),
               ),
 
 
           SizedBox(height: SizeConfig.blockSizeVertical! * 10,),
 
+          //コメント一覧を表示する
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.green),
@@ -254,32 +331,86 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
               children: [
 
                 Container(
-                  child: const Opacity(
-                    opacity: 0.5,
-                    child: Text(
-                              "コメント一覧",
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
-                            ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: const Opacity(
+                            opacity: 0.5,
+                            child: Text(
+                                      "コメント一覧",
+                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,fontStyle: FontStyle.italic)
+                                    ),
+                          ),
+                        ),
+                      ),
+
+                      IconButton(
+                        onPressed: (){
+                          setState(() {
+                            if(widget.isCreate){
+                              context.showErrorSnackBar(message: "リロードは問題を作成してから");
+                            }
+                            else{
+                              setState(() {
+                                fetchData();
+                              });
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.refresh),
+                      )
+                    ],
                   ),
                 ),
                 
                 Expanded(
                   child: ListView.builder(
                     reverse: true,
-                    itemCount: 10,
+                    itemCount: commentList.length,
                     itemBuilder: (BuildContext context, int index){
-                      return ListTile(
-                              title: Text("コメント"),
-                            );
+                      return ChatBubble(commentData: commentList[index]);
                     },
 
                   )
                 ),
 
-                Container(
+                Material(
+                  color: Colors.black12,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 3, // 複数行入力可能にする
+                            controller: _textController,
+                            decoration: const InputDecoration(
+                              hintText: 'メッセージを入力',
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.all(8),
+                            ),
 
-                  child: Text("aaaa"),
+                          ),
+                        ),
 
+                        TextButton(
+                          //onPressed: () => _submitMessage(),
+                          onPressed: () {
+                            if(widget.isCreate){
+                              context.showErrorSnackBar(message: "問題を作成してからコメントを送信してください。");
+                            }
+                            else{
+                              _submitMessage();
+                            }
+                          },
+                          child: const Text('送信'),
+                        ),
+                      ],
+                    ),
+                  )
                 ),
 
 
@@ -301,3 +432,5 @@ class _ProblemViewWidgetState extends State<ProblemViewWidget> {
     );
   }
 }
+
+
