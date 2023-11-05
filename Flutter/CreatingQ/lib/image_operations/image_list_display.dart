@@ -450,7 +450,36 @@ class MyListItem extends StatelessWidget {
                 num: item['num'],
 
                 explanation: item['explain'],
+
+                problem_id: item["problem_id"],
+                comment_id: item["comment_id"],
               ),
+
+              /*
+              builder: (context) => DisplayPage(
+                title: item['title'],
+
+                image_id: item["image_data_id"],
+                image_own_user_id: item["user_id"],
+                tag1: item['tag1'],
+                tag2: item['tag2'],
+                tag3: item['tag3'],
+                tag4: item['tag4'],
+                tag5: item['tag5'],
+
+                //tags: item['tags'],
+                level: item['level']!,
+                subject: item['subject']!,
+                image1: null,
+                image2: null,
+                imageUrlP: imageUrlP,
+                imageUrlC: imageUrlC,
+
+                num: item['num'],
+
+                explanation: item['explain'],
+              ),
+               */
 
             ),
 
