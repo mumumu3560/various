@@ -7,3 +7,6 @@ create_pageの方法を変える。
 問題と解説の二つ受け取れたらsupabaseにそれらのuuidを保存して完了とする。
 
 予期せぬエラーが起こった場合にカスタムIDが変更されない場合を考えなくてよくなる
+
+supabase側での処理を考える。
+image_dataに情報が挿入された際にusernameとnumを処理する→fetchproblemnumは必要ない
