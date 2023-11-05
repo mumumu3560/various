@@ -144,7 +144,19 @@ class ImageListDisplayState extends State<ImageListDisplay> {
             children: [
 
               if(imageData.isEmpty && !isLoading)
-                const Center(child: Text("データがありません。"))
+                //const Padding(padding: EdgeInsets.all(8.0),),
+                //const Center(child: Text("データがありません。"))
+                Container(
+                  padding: EdgeInsets.all(SizeConfig.blockSizeHorizontal! * 10),
+                  child: const Text(
+                    "data is empty",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                )
+
               else 
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
@@ -386,7 +398,7 @@ class MyListItem extends StatelessWidget {
                 Text(item["likes"].toString()),
                 formSpacer,
                 const Icon(Icons.chat, color: Colors.white,),
-                Text(item["likes"].toString()),
+                Text(item["comments"].toString()),
               ],
             ),
 
