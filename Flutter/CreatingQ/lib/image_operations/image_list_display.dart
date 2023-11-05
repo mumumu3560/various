@@ -223,10 +223,17 @@ class MyListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    /*
     final String imageUrlCX =
         '${item["user_id"]}XCommentXnum${item["num"].toString()}XPnum${item["P_I_count"].toString()}XCnum${item["C_I_count"].toString()}';
     final String imageUrlPX =
         '${item["user_id"]}XproblemXnum${item["num"].toString()}XPnum${item["P_I_count"].toString()}XCnum${item["C_I_count"].toString()}';
+    
+     */
+
+    final String? imageUrlPX = item["problem_id"];
+    final String? imageUrlCX = item["comment_id"];
+
     
     final String deliveryURL = dotenv.get('CLOUDFLARE_DELIVERY_URL');
     final String imageUrlC = '$deliveryURL/$imageUrlCX/public';
