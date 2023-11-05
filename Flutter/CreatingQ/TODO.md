@@ -29,3 +29,16 @@ Supabaseからのリクエストであることを保証したいと考えてい
 
 サーバーの方では大体できたので次はクライアント側の処理を書く。
 
+
+大体できたが、Cloudflare Workersの方でのエラーが問題。
+WorkersでのLogからoutcomeがcanceledであった。
+これで調べてみる。
+
+https://developers.cloudflare.com/workers/runtime-apis/handlers/tail/
+によると
+
+canceled: The worker invocation was canceled before it completed. Commonly because the client disconnected before a response could be sent.
+
+Supabase Webhooksのtimeoutを1000ms→5000msに変更することで解決した
+
+
