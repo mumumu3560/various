@@ -15,3 +15,9 @@ image_dataに情報が挿入された際にusernameとnumを処理する→fetch
 11/05
 テーブルに削除の要請があった場合の処理を考える。SupabaseでDeleteからWebhooksを使いCloudflare Workersに情報を送ろうとしたが、列がDeleteされてから情報を送る？ようなので対応するrequestBodyの情報がnullになってしまう。
 →違うテーブルを作りinsertの際にWebhooksを使えばいい。
+
+How to authenticate webhooks?
+https://github.com/orgs/supabase/discussions/14115
+
+Supabaseからのリクエストであることを保証したいと考えているのでそのあたりが上記のURLにかかれていそう。
+だがわからない
