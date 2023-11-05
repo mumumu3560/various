@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -193,7 +194,7 @@ class _CreatePageState extends State<CreatePage> {
   }
 
   // クラウドフレアのImageサービスからアップロード用のURLを取得する関数
-  Future<int> getImageUploadUrls() async {
+  Future<int> getImageUploadUrls(bool isOne) async {
 
     //TODO今は1つの問題につき2つの画像をアップロードするようにしているが、
     //これからは問題、解答複数枚に対応するようにする。
@@ -207,9 +208,10 @@ class _CreatePageState extends State<CreatePage> {
       response1 = await ImageSelectionAndRequest(
         //knownUserInfo: '${userId}XproblemXnum${problemNum.toString()}XPnum${problemIcount.toString()}XCnum${commentIcount.toString()}',
         knownUserInfo: userId,
+        //1回目ならisOne=true、2回目ならisOne=false
         onServerResponseReceived: (customId, directUploadUrl) {
-          onServerResponseReceived(customId, directUploadUrl, true);
-      },
+          onServerResponseReceived(customId, directUploadUrl, isOne);
+        },
 
       
       ).sendRequest().timeout(Duration(seconds: 10));
@@ -240,22 +242,23 @@ class _CreatePageState extends State<CreatePage> {
       return 2;
     }
 
-    
+    /*
+    // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
+    final checkUpload2 = await uploadSelectedImage(selectedImage2, customId2!, directUploadUrl2);
+
+    if(checkUpload2 as int != 0){
+      return 1;
+    }
+     */
 
     print("レスポンス確認");
 
     //TODO: responseがエラーを起こした場合の処理を書く
 
-    // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
-    print("ここが問題1");
-
-    final checkUpload1 = await uploadSelectedImage(selectedImage1, customId1!, directUploadUrl1);
     
-    if(checkUpload1 as int != 0){
-      return 1;
-    }
 
     print("ここが問題2");
+    /*
     int response2;
     try{
       // 2つ目の画像用のリクエスト
@@ -286,19 +289,45 @@ class _CreatePageState extends State<CreatePage> {
       }
       return 4;
     }
+     */
 
+    print("境目");
+    /*
     // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
     final checkUpload2 = await uploadSelectedImage(selectedImage2, customId2!, directUploadUrl2);
 
     if(checkUpload2 as int != 0){
       return 1;
     }
+     */
     print("できたかどうかの確認");
 
     return 0;
 
   }
 
+
+  Future<int> imageUploadWithUrls(bool isOne) async{
+    // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
+    print("ここが問題1");
+
+    if(isOne){
+      final checkUpload1 = await uploadSelectedImage(selectedImage1, customId1!, directUploadUrl1);
+    
+      if(checkUpload1 as int != 0){
+        return 1;
+      }
+    }
+    else{
+      final checkUpload2 = await uploadSelectedImage(selectedImage2, customId2!, directUploadUrl2);
+    
+      if(checkUpload2 as int != 0){
+        return 1;
+      }
+    }
+
+    return 0;
+  }
 
   // タグを追加する関数
   void addTag() {
@@ -673,11 +702,13 @@ class _CreatePageState extends State<CreatePage> {
 
             // 画像をアップロード
             //Cloudflare
-            int checkUpload = await getImageUploadUrls();
+            //int checkUpload = await getImageUploadUrls();
 
+            int checkGetUploadUrl1 = await getImageUploadUrls(true);
+            int checkGetUploadUrl2 = await getImageUploadUrls(false);
             
 
-            if(checkUpload != 0){
+            if(checkGetUploadUrl1 != 0 || checkGetUploadUrl2 != 0){
               if(context.mounted){
                 //context.showErrorSnackBar(message: "サーバーエラーにより、画像のアップロードができませんでした。");
                 Navigator.of(context).pop();
@@ -685,7 +716,7 @@ class _CreatePageState extends State<CreatePage> {
               
               AlertDialog(
                 title: Text("エラー"),
-                content: Text("サーバーエラーにより、画像のアップロードができませんでした。"),
+                content: Text("サーバーエラーにより、URLの取得ができませんでした。"),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
@@ -724,6 +755,33 @@ class _CreatePageState extends State<CreatePage> {
             }
 
             print("Supabaseはおｋ");
+
+            int checkUpload1 = await imageUploadWithUrls(true);
+            int checkUpload2 = await imageUploadWithUrls(false);
+
+
+            if(checkGetUploadUrl1 != 0 || checkGetUploadUrl2 != 0){
+              if(context.mounted){
+                //context.showErrorSnackBar(message: "サーバーエラーにより、画像のアップロードができませんでした。");
+                Navigator.of(context).pop();
+              }
+              
+              AlertDialog(
+                title: Text("エラー"),
+                content: Text("サーバーエラーにより、画像のアップロードができませんでした。"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // ダイアログを閉じる
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+
+              return;
+            }
+
 
 
             
