@@ -21,3 +21,8 @@ https://github.com/orgs/supabase/discussions/14115
 
 Supabaseからのリクエストであることを保証したいと考えているのでそのあたりが上記のURLにかかれていそう。
 だがわからない
+
+"Note: I see that there's a headers section, but pasting in a static secret value there seems not great - at the very least there should be some docs around it."
+
+このように静的なパスワードを含めることは可能だが動的にしたい。
+そもそもサーバー間の通信がどう行われるかや安全性などが全く分からない
