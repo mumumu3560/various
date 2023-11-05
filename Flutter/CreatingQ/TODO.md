@@ -2,6 +2,7 @@
 
 ## aab 1.0.8+8
 
+11/04
 create_pageの方法を変える。
 まずdirectuploadではカスタムIDではなくuuidのランダム生成とする。
 問題と解説の二つ受け取れたらsupabaseにそれらのuuidを保存して完了とする。
@@ -10,3 +11,7 @@ create_pageの方法を変える。
 
 supabase側での処理を考える。
 image_dataに情報が挿入された際にusernameとnumを処理する→fetchproblemnumは必要ない
+
+11/05
+テーブルに削除の要請があった場合の処理を考える。SupabaseでDeleteからWebhooksを使いCloudflare Workersに情報を送ろうとしたが、列がDeleteされてから情報を送る？ようなので対応するrequestBodyの情報がnullになってしまう。
+→違うテーブルを作りinsertの際にWebhooksを使えばいい。
