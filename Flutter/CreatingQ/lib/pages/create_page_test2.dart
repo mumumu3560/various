@@ -116,6 +116,8 @@ class _CreatePageState extends State<CreatePage> {
   //その数をproblemNumに代入する。
   //supabaseに問題を投稿するときに、numにproblemNumを代入する。
   //TODOこれ必要かわからない
+  
+  /*
   Future<void> fetchProblemNum() async{
     print(userId);
     final response = await supabase.from("profiles").select().eq("id", userId);
@@ -124,20 +126,25 @@ class _CreatePageState extends State<CreatePage> {
     problemNum++;
     userName = response[0]["username"];
   }
+   */
 
   // Supabaseに情報を送信する関数（未実装）
   Future<int> sendInfoToSupabase() async {
     // TODO: Supabaseに情報を送信するロジックを実装
 
-    
+    if(directUploadUrl1 == null || directUploadUrl2 == null){
+      return 10;
+    }
+
+    //numとusernameはsupabase側で行えばよい
     try{
       //ここでは、問題の情報をsupabaseに送る。
       //P_I_CountとC_I_Countは、問題文の画像と解説の画像の数を表す。今は1にしておく。
       await supabase.from("image_data").insert({
-        "num": problemNum,
+        //"num": problemNum,
         "title": problemTitle,
         "subject": subject,
-        "PorC": 1,
+        //"PorC": 1,
         "level": level,
         //"tags": tags,
         "tag1": tags.length > 0 ? tags[0] : null,
@@ -146,18 +153,25 @@ class _CreatePageState extends State<CreatePage> {
         "tag4": tags.length > 3 ? tags[3] : null,
         "tag5": tags.length > 4 ? tags[4] : null,
         "user_id": userId,
-        "P_I_count": 1,
-        "C_I_count": 1,
-        "user_name" : userName,
+        "p_num": 1,
+        "c_num": 1,
+        //"user_name" : userName,
         "explain": explainText,
+        "problem_id": customId1,
+        "comment_id": customId2,
         //"likes": 100,
       });
 
       //ここでは、ユーザーの問題の投稿数を増やす。
+
+      //TODO ここを消す。supabaseで処理
+      
+      /*
       await supabase.from("profiles").update({
         "problem_num": problemNum,
       }).eq("id", userId);
 
+       */
 
       return 0;
 
@@ -184,27 +198,28 @@ class _CreatePageState extends State<CreatePage> {
     //TODO今は1つの問題につき2つの画像をアップロードするようにしているが、
     //これからは問題、解答複数枚に対応するようにする。
 
-    //送る情報は、画像の名前(これはcloudflareの方)
-    //problemNumは、それが何回目に作られた問題化を示す。(一意)
-    //userId+"?"+"problemORComment"+problemNum.toString()+"?"+"number"
-    // 1つ目の画像用のリクエスト
-    //09004426-6a8d-4633-9cda-fae9bd2ee46cXcommentX4X1Xaxbcd12333333
-    //09004426-6a8d-4633-9cda-fae9bd2ee46c?Comment?num=10?Pnum=1?Cnum=1
-
     print("ここは？");
 
-    //ここではknownUserInfoとonServerResponseReceived(関数)が必要なのでそれを渡す。
-    final response1 = await ImageSelectionAndRequest(
-      knownUserInfo: '${userId}XproblemXnum${problemNum.toString()}XPnum${problemIcount.toString()}XCnum${commentIcount.toString()}',
-      //knownUserInfo: userId+"?"+"problem"+"?"+problemNum.toString()+"?"+problemIcount.toString(),
-      onServerResponseReceived: (customId, directUploadUrl) {
-        onServerResponseReceived(customId, directUploadUrl, true);
+    int response1;
+    try{
+      
+      //ここではknownUserInfoとonServerResponseReceived(関数)が必要なのでそれを渡す。
+      response1 = await ImageSelectionAndRequest(
+        //knownUserInfo: '${userId}XproblemXnum${problemNum.toString()}XPnum${problemIcount.toString()}XCnum${commentIcount.toString()}',
+        knownUserInfo: userId,
+        onServerResponseReceived: (customId, directUploadUrl) {
+          onServerResponseReceived(customId, directUploadUrl, true);
       },
 
       
-    ).sendRequest();
+      ).sendRequest().timeout(Duration(seconds: 10));
+
+    } catch(e){
+      response1 = 1;
+    }
 
     print(response1);
+    print("ここではdirectUploadUrlが取得できたかどうか");
 
     if(response1 == 0){
       //context.showErrorSnackBar(message: "サーバーエラーが発生しました。");
@@ -234,22 +249,27 @@ class _CreatePageState extends State<CreatePage> {
     // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
     print("ここが問題1");
 
-    final checkUpload1 = uploadSelectedImage(selectedImage1, customId1!, directUploadUrl1);
+    final checkUpload1 = await uploadSelectedImage(selectedImage1, customId1!, directUploadUrl1);
     
     if(checkUpload1 as int != 0){
       return 1;
     }
 
     print("ここが問題2");
-    // 2つ目の画像用のリクエスト
-    final response2 = await ImageSelectionAndRequest(
-      knownUserInfo: '${userId}XCommentXnum${problemNum.toString()}XPnum${problemIcount.toString()}XCnum${commentIcount.toString()}',
-      
-      onServerResponseReceived: (customId, directUploadUrl) {
-        onServerResponseReceived(customId, directUploadUrl, false);
-      },
+    int response2;
+    try{
+      // 2つ目の画像用のリクエスト
+      response2 = await ImageSelectionAndRequest(
+        //knownUserInfo: '${userId}XCommentXnum${problemNum.toString()}XPnum${problemIcount.toString()}XCnum${commentIcount.toString()}',
+        knownUserInfo: userId,
+        onServerResponseReceived: (customId, directUploadUrl) {
+          onServerResponseReceived(customId, directUploadUrl, false);
+        },
 
-    ).sendRequest();
+      ).sendRequest().timeout(Duration(seconds: 5));
+    }catch(e){
+      response2 = 1;
+    }
 
     if(response2 == 0){
       //context.showErrorSnackBar(message: "サーバーエラーが発生しました。");
@@ -268,7 +288,7 @@ class _CreatePageState extends State<CreatePage> {
     }
 
     // customId1, customId2, directUploadUrl1, directUploadUrl2 を使用して画像をアップロード
-    final checkUpload2 = uploadSelectedImage(selectedImage2, customId2!, directUploadUrl2);
+    final checkUpload2 = await uploadSelectedImage(selectedImage2, customId2!, directUploadUrl2);
 
     if(checkUpload2 as int != 0){
       return 1;
@@ -550,7 +570,7 @@ class _CreatePageState extends State<CreatePage> {
                     ElevatedButton(
                       onPressed: () async{
                         print("now");
-                        await fetchProblemNum();
+                        //await fetchProblemNum();
                         print("isOK");
 
                         if (selectedImage1 == null ||
