@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 
+import 'package:timeago/timeago.dart';
+
 //https://www.kamo-it.org/blog/flutter-extension/
 //https://zenn.dev/dshukertjr/books/flutter-supabase-chat/viewer/page1
 
 final supabase = Supabase.instance.client;
-
+final myUserId = supabase.auth.currentUser!.id.toString();
 //プリローダー
 const preloader = Center(child: CircularProgressIndicator(color: Colors.orange));
 
@@ -87,6 +89,92 @@ extension ShowSnackBar on BuildContext {
       backgroundColor: Theme.of(this).colorScheme.secondary,
     );
   }
+}
+
+
+
+/// チャットのメッセージを表示するためのウィジェット
+class ChatBubble extends StatelessWidget {
+
+  final Map<String, dynamic> commentData;
+  
+  const ChatBubble({
+    Key? key,
+    required this.commentData,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
+      child: Row(
+        children: [
+            const SizedBox(width: 12),
+            Flexible(
+                child: Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 12,
+                ),
+                decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(commentData["comments"]),
+                ),
+            ),
+            const SizedBox(width: 12),
+            Text(format(DateTime.parse(commentData["created_at"]), locale: 'ja')),
+             // 時間を表示
+            const SizedBox(width: 60),
+        ],
+      ),
+    );
+  }
+}
+
+class ShowDialogWithFunction {
+  final String title;
+  final String shownMessage;
+  final Future<void> Function() functionOnPressed;
+  final BuildContext context;
+  
+
+  ShowDialogWithFunction({
+    required this.title,
+    required this.shownMessage,
+    required this.functionOnPressed,
+    required this.context,
+  });
+
+  Future<void> show() async{
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(shownMessage),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // ダイアログを閉じる
+              },
+              child: Text('キャンセル'),
+            ),
+            TextButton(
+              onPressed: () async{
+                Navigator.of(context).pop(); // ダイアログを閉じる
+                await functionOnPressed();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 }
 
 
