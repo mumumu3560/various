@@ -42,4 +42,5 @@ canceled: The worker invocation was canceled before it completed. Commonly becau
 Supabase Webhooksのtimeoutを1000ms→5000msに変更することで解決した
 
 # aab 1.09+9
-
+androidでビルドリリースしたものについて
+・コメント周りがよくない。コメントを打ち込む際に文字が見えなくなる。テキストを一文字うつとキャンセルされる。
