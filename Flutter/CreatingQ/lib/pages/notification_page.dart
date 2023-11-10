@@ -9,27 +9,16 @@ import 'package:share_your_q/pages/display_page_relation/display_page.dart';
 
 import "package:share_your_q/models/radar_chart_test1.dart";
 
-//TODO ここにプロフィールページを作成する
+//TODO ここに通知管理
 //グラフなどで自分の問題の傾向を見れるようにする
 
-class ProfilePage extends StatefulWidget {
-
-  final String userId;
-
-  const ProfilePage({
-    Key? key,
-    required this.userId,
-  }): super(key: key);
-  
+class NotificationPage extends StatefulWidget {
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _NotificationPageState createState() => _NotificationPageState();
 }
-class _ProfilePageState extends State<ProfilePage> {
-  List<Map<String, dynamic>> imageData = [];
-  int currentPage = 1;
-  int itemsPerPage = 10;
-  bool isLoading = true;
-  int maxPage = 1;
+class _NotificationPageState extends State<NotificationPage> {
+
+
 
   @override
   Widget build(BuildContext context) {

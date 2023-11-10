@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share_your_q/image_operations/image_display.dart'; // ImageDisplayScreenをインポート
 import "package:share_your_q/utils/various.dart";
 
-import "package:share_your_q/pages/display_page.dart";
+import 'package:share_your_q/pages/display_page_relation/display_page.dart';
 
 import "package:share_your_q/image_operations/test_override.dart";
 import "package:share_your_q/image_operations/image_list_display.dart";
@@ -171,7 +171,7 @@ class _SearchPageState extends State<SearchPage> {
                 
             
             
-                /*
+                
                 // タグの入力フォーム
                 TextFormField(
                   maxLength: 10,
@@ -186,10 +186,10 @@ class _SearchPageState extends State<SearchPage> {
                     labelText: '検索したいタグを入力',
                   ),
                 ),
-                 */
+                 
             
             
-                /*
+                
                 ElevatedButton(
                   onPressed: addTag,
                   child: Text("タグを追加"),
@@ -207,14 +207,14 @@ class _SearchPageState extends State<SearchPage> {
                   )
                 .toList(),
                 ),
-                 */
+                 
             
             
                 ElevatedButton(
                   onPressed:(){
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ImageListDisplay(title: method, subject: subject, level: level, method: method,tags: [], searchUserId: "",), // ImageDisplayに遷移
+                        builder: (context) => ImageListDisplay(title: method, subject: subject, level: level, method: method,tags: tags, searchUserId: "",), // ImageDisplayに遷移
                       ),
                     );
                   },
@@ -235,7 +235,7 @@ class _SearchPageState extends State<SearchPage> {
 
 
           Container(
-            height: SizeConfig.blockSizeVertical! * 30,
+            height: SizeConfig.blockSizeVertical! * 15,
             //height: 100 ,
             width: double.infinity,
             color: Colors.white,
@@ -243,7 +243,6 @@ class _SearchPageState extends State<SearchPage> {
             //child: _adMob.getAdBanner(),
           ),
 
-          SizedBox(height: SizeConfig.blockSizeVertical! * 2,),
 
         ],
 
