@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:share_your_q/image_operations/image_display.dart'; // ImageDisplayScreenが定義されたファイルをインポート
 import 'package:share_your_q/utils/various.dart';
@@ -15,7 +13,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 //リストをタップした際に遷移するページ問題が見れる
 //UIはわからない
 
-//テキストを保持する
+//テキストを保持する。
+//コメントを送信した場合には空
+//入力がありそれを送信していない場合には、そのテキストを保持する
 String textKeeper = "";
 
 class DisplayPage extends StatefulWidget {
@@ -43,6 +43,12 @@ class DisplayPage extends StatefulWidget {
   final String? explanation;
 
   final int? num;
+
+  //TODO ここは後でまとめる。itemを受け取る形にする
+  //具体的にはMap<String, dynamic>を受け取る形にする
+
+  final String? problem_id;
+  final String? comment_id;
   
 
 
@@ -69,6 +75,9 @@ class DisplayPage extends StatefulWidget {
 
     required this.explanation,
     required this.num,
+
+    required this.problem_id,
+    required this.comment_id,
 
   }) : super(key: key);
 
@@ -103,6 +112,7 @@ class _DisplayPageState extends State<DisplayPage>{
     //_adMob.dispose();
   }
 
+
   Future<void> _initializeData() async {
     try {
       // 非同期処理（データの取得やAPIコールなど）を行う
@@ -115,70 +125,6 @@ class _DisplayPageState extends State<DisplayPage>{
     }
   }
 
-  Future<void> _insertTestSupabase() async{
-    try {
-      // `user_id`と`image_id`の組み合わせで既存のレコードを検索する
-      final existingRecord = await supabase
-          .from('likes')
-          .select<List<Map<String, dynamic>>>()
-          .eq('user_id', userId)
-          .eq('image_id', widget.image_id);
-
-      // レコードが存在する場合はアップデート、存在しない場合は挿入する
-      if (existingRecord.isNotEmpty) {
-        // レコードが存在する場合はアップデート
-        print("ここが問題手の");
-        isLiked = existingRecord[0]["add"];
-        print(existingRecord[0]["add"]);
-
-        
-        print("どこだよ");
-
-        //islikedが!isliked
-        final response = await supabase
-            .from('likes')
-            .update({ 'add': !isLiked })
-            .eq("image_id", widget.image_id)
-            .eq("user_id", userId);
-
-        //isLiked = !isLiked;
-        if (response != null) {
-          // エラーハンドリング
-          print('Error updating data: ${response}');
-        } else {
-          // 成功時の処理
-          print('Data updated successfully!');
-        }
-      } else {
-        print("ここが二つ目");
-        print("errorが発生しています");
-        // レコードが存在しない場合は挿入
-        final response = await supabase
-            .from('likes')
-            .insert({ 
-              'add': false,
-              'user_id': userId,
-              'problem_num' : widget.num,
-              "image_id" : widget.image_id,
-              "image_own_user_id" : widget.image_own_user_id,
-              });
-
-        print("here");
-        print(response);
-
-        if (response == null) {
-          // エラーハンドリング
-          print('Error inserting data: ${response}');
-        } else {
-          // 成功時の処理
-          print('Data inserted successfully!');
-        }
-      }
-    } catch (error) {
-      // 例外が発生した場合のエラーハンドリング
-      print('Error: $error');
-    }
-  }
 
   Future<void> _insertOrUpdateDataToSupabaseTable() async {
     try {
@@ -242,79 +188,28 @@ class _DisplayPageState extends State<DisplayPage>{
     }
   }
 
-  void _showCommentSheet(BuildContext context, int imageId) {
-    showModalBottomSheet(
-      context: context,
-      //これがないと高さが変わらない
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Container(
-          height: SizeConfig.blockSizeVertical! * 60,
-          child: CommentListDisplay(image_id: imageId),
-        );
-      },
-    );
-  }
+
+
 
 
   @override
   Widget build(BuildContext context){
 
      return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('画像一覧'),
+
+        
         actions: [
-          IconButton(
-            icon: const Icon(Icons.chat, color: Colors.green,),
-            tooltip: "コメント",
-            onPressed: (){
-              _showCommentSheet(context, widget.image_id!);
-            },
+          AppBarActions(
+            isLiked: isLiked,
+            imageId: widget.image_id,
+            problem_id: widget.problem_id,
+            comment_id: widget.comment_id,
+            image_own_user_id: widget.image_own_user_id,
+            num: widget.num,
           ),
-
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
-
-          //ここで問題の評価を見る
-          IconButton(
-            icon: const Icon(Icons.bar_chart, color: Colors.blue,),
-            tooltip: "評価",
-            onPressed: (){
-              _showCommentSheet(context, widget.image_id!);
-            },
-          ),
-
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
-
-          //ここで問題の評価を行う
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white,),
-            tooltip: "評価する",
-            onPressed: (){
-              _showCommentSheet(context, widget.image_id!);
-            },
-          ),
-
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
-
-          IconButton(
-            icon: Icon(
-              isLiked ? Icons.favorite : Icons.favorite_border_outlined,
-              color: isLiked ? Colors.red : Colors.white,
-            ),
-            
-            tooltip: "いいね",
-            onPressed: () async{
-              
-              await _insertTestSupabase();
-
-              setState(() {            
-                isLiked = !isLiked;
-              });
-            },
-          ),
-
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
-
 
         ],
       ),
@@ -359,40 +254,6 @@ class _DisplayPageState extends State<DisplayPage>{
       
                   ),
 
-                  /*
-                  
-                  SizedBox(height: SizeConfig.blockSizeVertical! * 10,),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.red),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-
-                    height: SizeConfig.blockSizeVertical! * 60,
-
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            reverse: true,
-                            itemCount: 10,
-
-                            itemBuilder: (BuildContext context, int index){
-                              return ListTile(
-                                title: Text("コメント"),
-                              );
-                            },
-
-                            
-                          )
-                        ),
-                      ],
-                    ),
-                    
-                  ),
-                   */
-
                 ],
               )
       
@@ -433,14 +294,10 @@ class _DisplayPageState extends State<DisplayPage>{
 
 class CommentListDisplay extends StatefulWidget{
   
-    //final String? comment;
-    //final String? created_at;
     final int? image_id;
   
     const CommentListDisplay({
       Key? key,
-     //required this.comment,
-      //required this.created_at,
       required this.image_id,
     }) : super(key: key);
   
@@ -454,33 +311,21 @@ class _CommentListDisplayState extends State<CommentListDisplay>{
 
   late final TextEditingController _textController = TextEditingController();
 
-  /*
-  Future<void> fetchData() async{
-
-    _commentList = await supabase
-          .from('comments')
-          .select<List<Map<String, dynamic>>>()
-          .eq('image_id', widget.image_id)
-          .order("created_at");
-
-    print(_commentList);
-  }
-   */
 
   Future<List<Map<String, dynamic>>> fetchData() async {
-  // 非同期処理を行う（例: データの取得）
-  List<Map<String, dynamic>> data = await supabase
-          .from('comments')
-          .select<List<Map<String, dynamic>>>()
-          .eq('image_id', widget.image_id)
-          .order("created_at");
-  return data; // 結果をFutureで包んで返す
+    List<Map<String, dynamic>> data = await supabase
+            .from('comments')
+            .select<List<Map<String, dynamic>>>()
+            .eq('image_id', widget.image_id)
+            .order("created_at");
+    return data; 
 }
 
 
   /// メッセージを送信する
   void _submitMessage() async {
     final comment = _textController.text;
+    textKeeper = "";
     if (comment.isEmpty) {
       context.showErrorSnackBar(message: "コメントが入力されていません。");
       return;
@@ -507,8 +352,6 @@ class _CommentListDisplayState extends State<CommentListDisplay>{
         _commentList = data;
       });
     });
-
-    //context.showSuccessSnackBar(message: "コメントを送信しました。コメントを見たい場合にはリロードしてください");
     
   }
 
@@ -526,6 +369,7 @@ class _CommentListDisplayState extends State<CommentListDisplay>{
 
   @override
   void dispose() {
+    textKeeper = _textController.text;
     _textController.dispose();
     super.dispose();
   }
@@ -609,15 +453,11 @@ class _CommentListDisplayState extends State<CommentListDisplay>{
                         contentPadding: EdgeInsets.all(8),
                       ),
 
-                      onChanged: (text) {
-                        textKeeper = text;
-                      },
 
                     ),
                   ),
 
                   TextButton(
-                    //onPressed: () => _submitMessage(),
                     onPressed: () {
                       _submitMessage();
                     },
@@ -637,4 +477,356 @@ class _CommentListDisplayState extends State<CommentListDisplay>{
 
 }
 
+
+
+
+//ここはappbarのアクション周りの定義。
+//DisplayPageの方に含めた方がいい？
+class AppBarActions extends StatefulWidget {
+  
+  final bool? isLiked;
+  final int? imageId;
+  final String? problem_id;
+  final String? comment_id;
+  final String? image_own_user_id;
+  final int? num;
+
+
+  const AppBarActions({
+    Key? key,
+    required this.isLiked,
+    required this.imageId,
+    required this.problem_id,
+    required this.comment_id,
+    required this.image_own_user_id,
+    required this.num,
+
+  }):super(key: key);
+
+  @override
+  _AppBarActionsState createState() => _AppBarActionsState();
+}
+
+class _AppBarActionsState extends State<AppBarActions> {
+  bool isLiked = false;
+
+  @override
+  void initState(){
+    super.initState();
+    isLiked = widget.isLiked!;
+  }
+
+
+  Future<void> _insertTestSupabase() async{
+    try {
+      // `user_id`と`image_id`の組み合わせで既存のレコードを検索する
+      final existingRecord = await supabase
+          .from('likes')
+          .select<List<Map<String, dynamic>>>()
+          .eq('user_id', myUserId)
+          .eq('image_id', widget.imageId);
+
+      // レコードが存在する場合はアップデート、存在しない場合は挿入する
+      if (existingRecord.isNotEmpty) {
+        // レコードが存在する場合はアップデート
+        print("ここが問題手の");
+        isLiked = existingRecord[0]["add"];
+        print(existingRecord[0]["add"]);
+
+        
+        print("どこだよ");
+
+        //islikedが!isliked
+        final response = await supabase
+            .from('likes')
+            .update({ 'add': !isLiked })
+            .eq("image_id", widget.imageId)
+            .eq("user_id", myUserId);
+
+        //isLiked = !isLiked;
+        if (response != null) {
+          // エラーハンドリング
+          print('Error updating data: ${response}');
+        } else {
+          // 成功時の処理
+          print('Data updated successfully!');
+        }
+      } else {
+        print("ここが二つ目");
+        print("errorが発生しています");
+        // レコードが存在しない場合は挿入
+        final response = await supabase
+            .from('likes')
+            .insert({ 
+              'add': false,
+              'user_id': myUserId,
+              'problem_num' : widget.num,
+              "image_id" : widget.imageId,
+              "image_own_user_id" : widget.image_own_user_id,
+              });
+
+        print("here");
+        print(response);
+
+        if (response == null) {
+          // エラーハンドリング
+          print('Error inserting data: ${response}');
+        } else {
+          // 成功時の処理
+          print('Data inserted successfully!');
+        }
+      }
+    } catch (error) {
+      // 例外が発生した場合のエラーハンドリング
+      print('Error: $error');
+    }
+  }
+
+  void _showCommentSheet(BuildContext context, int imageId) {
+    showModalBottomSheet(
+      context: context,
+      //これがないと高さが変わらない
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          height: SizeConfig.blockSizeVertical! * 60,
+          child: CommentListDisplay(image_id: imageId),
+        );
+      },
+    );
+  }
+
+  Future<void> deleteRequestSupabase() async{
+      
+    showLoadingDialog(context, "削除申請中...");
+    print(widget.imageId!);
+
+    //await Future.delayed(Duration(seconds: 5));
+
+    try{
+      
+      //ここはSupabaseのカスケード設定で対応するimage_dataテーブルが消えるとここも消える
+      await supabase.from("delete_request").insert({
+        "image_data_id": widget.imageId,
+        "user_id": myUserId,
+        "problem_id": widget.problem_id,
+        "comment_id": widget.comment_id,
+    });
+    
+
+      print("これは削除申請");
+
+    } on PostgrestException catch (error){
+
+      if(context.mounted){
+        context.showErrorSnackBar(message: error.message);
+      }
+
+    } catch(_){
+
+      if(context.mounted){
+      context.showErrorSnackBar(message: unexpectedErrorMessage);
+      }
+    }
+
+    print("ここで削除依頼をCloudflareに送る。");
+
+    //TODO ここから変わる
+
+    if(context.mounted){
+      Navigator.of(context).pop(); // ダイアログを閉じる
+    }
+
+
+
+    showLoadingDialog(context, "削除中...");
+    print(widget.imageId!);
+
+    try{
+      //ここでは、問題の情報をsupabaseに送る。
+      //P_I_CountとC_I_Countは、問題文の画像と解説の画像の数を表す。今は1にしておく。
+      await supabase.from("image_data")
+        .delete()
+        .eq("image_data_id", widget.imageId);
+
+      print("これは削除申請");
+
+    } on PostgrestException catch (error){
+
+      if(context.mounted){
+        context.showErrorSnackBar(message: error.message);
+      }
+
+    } catch(_){
+
+      if(context.mounted){
+      context.showErrorSnackBar(message: unexpectedErrorMessage);
+      }
+    }
+
+    print("削除ができたはず");
+
+    if(context.mounted){
+      Navigator.of(context).pop(); // ダイアログを閉じる
+    }
+
+    if(context.mounted){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Done"),
+            content: Text("問題の削除が終わりました"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  //Navigator.pop(context);
+                  Navigator.of(context).pop(); // ダイアログを閉じる
+                },
+                child: Text('閉じる'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Future<void> _showSettingSheet(BuildContext context) async{
+    
+    showModalBottomSheet(
+      context: context,
+      //これがないと高さが変わらない
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          height: SizeConfig.blockSizeVertical! * 20,
+          alignment: Alignment.center,
+          child: ListView(
+
+            children: [
+
+
+              widget.image_own_user_id == myUserId
+              ? ListTile(
+                  leading: Icon(Icons.delete),
+                  title: Text("この投稿を削除する"),
+                  onTap: () async{
+                    await ShowDialogWithFunction(
+                      context: context, 
+                      title: "確認", 
+                      shownMessage: "この投稿を削除しますか？", 
+                      functionOnPressed: deleteRequestSupabase,
+                    ).show();
+                      //削除する
+                  },
+                )
+
+              : ListTile(
+                  leading: Icon(Icons.report),
+                  title: Text("この投稿を通報する"),
+                  onTap: () async{
+                    await ShowDialogWithFunction(
+                      context: context, 
+                      title: "確認", 
+                      shownMessage: "この投稿を通報しますか？", 
+                      functionOnPressed: () async{
+                        await supabase.from("report").insert({
+                          "image_data_id": widget.imageId,
+                          "user_id": myUserId,
+                          "content": "",
+                        });
+                      },
+                    ).show();
+                  },
+                ),
+
+              
+
+
+              
+            ],
+          )
+        );
+      },
+    );
+  }
+
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.chat, color: Colors.green,),
+          tooltip: "コメント",
+          onPressed: (){
+            _showCommentSheet(context, widget.imageId!);
+          },
+        ),
+
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
+
+        //ここで問題の評価を見る
+        IconButton(
+          icon: const Icon(Icons.bar_chart, color: Colors.blue,),
+          tooltip: "評価",
+          onPressed: (){
+            _showCommentSheet(context, widget.imageId!);
+          },
+        ),
+
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
+
+        //ここで問題の評価を行う
+        IconButton(
+          icon: const Icon(Icons.edit, color: Colors.white,),
+          tooltip: "評価する",
+          onPressed: (){
+            _showCommentSheet(context, widget.imageId!);
+          },
+        ),
+
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
+
+        IconButton(
+          icon: Icon(
+            isLiked ? Icons.favorite : Icons.favorite_border_outlined,
+            color: isLiked ? Colors.red : Colors.white,
+          ),
+          
+          tooltip: "いいね",
+          onPressed: () async{
+            
+            
+            await _insertTestSupabase();
+
+            setState(() {            
+              isLiked = !isLiked;
+            });
+             
+
+          },
+        ),
+
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
+
+        IconButton(
+          icon: const Icon(
+            Icons.more_vert, color: Colors.white,
+          ),
+          
+          tooltip: "処理",
+          onPressed: () async{
+            _showSettingSheet(context);
+
+          },
+        ),
+
+        SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
+      ],
+    );
+  }
+}
 

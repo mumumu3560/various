@@ -3,7 +3,7 @@ import 'package:share_your_q/pages/profile_page.dart';
 import 'package:share_your_q/utils/various.dart';
 import 'package:share_your_q/image_operations/image_display.dart';
 
-import "package:share_your_q/pages/display_page.dart";
+import 'package:share_your_q/pages/display_page_relation/display_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -64,19 +64,6 @@ class ImageListDisplayState extends State<ImageListDisplay> {
 
   Future<void> fetchData() async {
     try {
-      //items: <String>['新着', '未発掘', 'いいね順', "ランダム"]
-
-      /*
-
-      response = await supabase
-            .from("image_data")
-            .select<List<Map<String, dynamic>>>()
-            .like("subject", widget.subject as String)
-            .like("level", widget.level as String)
-            .eq("watched", 0)
-            .order('created_at');
-       */
-
       final List<Map<String, dynamic>> response;
 
       //Conditional Chaining
@@ -86,6 +73,38 @@ class ImageListDisplayState extends State<ImageListDisplay> {
       if(widget.subject != "全て" && widget.subject != null) query = query.eq("subject", widget.subject as String);
       if(widget.method == "未発掘") query = query.eq("watched", 0);
       if(widget.searchUserId != "" && widget.searchUserId != null) query = query.eq("user_id", widget.searchUserId as String);
+
+      List<String> tags = [];
+
+      for (var tag in widget.tags!) {
+        if(tag == "" || tag == null) continue;
+        tags.add(tag);
+      }
+
+      for (var tag in tags){
+        print(tag);
+      }
+
+
+      //ここでtagを検索する
+      for (var tag in tags) {
+        if(tag == "" || tag == null) continue;
+
+        //orはその中でどれかに当てはまればいい*はワイルドパターン%と同じ
+        //https://supabase.com/docs/reference/dart/or
+        //https://postgrest.org/en/stable/references/api/tables_views.html#horizontal-filtering-rows
+
+        query = query.or(
+          "tag1.like.*$tag*,"
+          "tag2.like.*$tag*,"
+          "tag3.like.*$tag*,"
+          "tag4.like.*$tag*,"
+          "tag5.like.*$tag*");
+        print(tag);
+        //query = query.eq("tag1", tag);
+      }
+      print("ここまでtag");
+      //query = query.eq("tag1", tags[0]);
 
       if(widget.method == "新着"){
         response = await query.order("created_at", ascending: false);
@@ -271,7 +290,7 @@ class MyListItem extends StatelessWidget {
             } else if (snapshot.hasError || snapshot.data == "" || snapshot.hasError) {
               // エラーが発生した場合は代替のアイコンを表示する
               return GestureDetector(
-                child: CircleAvatar(
+                child: const CircleAvatar(
                   radius: 20,
                   child: Icon(
                     Icons.error_outline,
@@ -298,7 +317,7 @@ class MyListItem extends StatelessWidget {
                       height: 40,
                       errorBuilder: (context, error, stackTrace) {
                 // エラーが発生した場合の代替イメージを表示する
-                return Icon(
+                return const Icon(
                   Icons.error_outline,
                   color: Colors.red,
                   size: 40,
@@ -411,19 +430,6 @@ class MyListItem extends StatelessWidget {
             context.showErrorSnackBar(message: "この問題は読み込めません");
             return;
           }
-
-          print(item["tag1"]);
-          print(item["tag2"]);
-          print(item["tag3"]);
-          print(item["tag4"]);
-          print(item["tag5"]);
-          print(item["level"]);
-          print(item["subject"]);
-          print(item["image_data_id"]);
-          print(item["user_id"]);
-          print(item["num"]);
-          print(item["explain"]);
-
           
           Navigator.of(context).push(
 
